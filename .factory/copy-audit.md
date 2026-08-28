@@ -72,6 +72,5 @@ Templates” (3), “Flex Meals” (2), “My meals” (2), “Demo” (1), and 
 | Tabular log download | CSV export |
 | Separate sample mode | demo |
 
-Catalog description: “Adjust meal portions and check each log against your
-saved nutrition ranges.” It has 12 words, 76 characters, and starts with a
-verb.
+Catalog description: “Adjust meal portions and compare every log with saved
+nutrition ranges.” It has 11 words, 71 characters, and starts with a verb.

@@ -1,0 +1,14 @@
+{
+  "url": "https://flex-meal-templates.sociobot.in/demo/new",
+  "loadMs": 555,
+  "errors": [],
+  "a11y": {
+    "title": "New sample meal — Flex Meal Templates",
+    "lang": "en",
+    "h1": 1,
+    "main": true,
+    "imgsMissingAlt": 0,
+    "buttonsUnlabeled": 0,
+    "textLength": 935
+  }
+}

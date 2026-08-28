@@ -1,54 +1,69 @@
-# Flex Meal Templates — review 3 handoff
+# Flex Meal Templates — polish round 3 handoff
 
 ## Result
 
-**FAIL.** The adversarial review is recorded in `.factory/review-3.md`.
-The live product passes its cold first screen, isolated demo, all 11 declared
-claim tests, offline/privacy checks, prior-finding reconciliation, and
-accessibility checks. One minor finding remains: `public/sitemap.xml` omits the
-stable `/app/new` and `/demo/new` routes.
+**PASS.** All findings in review rounds 1–3 are resolved in the shipped PWA.
+The repair commit is `ed8c9d6c591c4e6afe840578b28f50008d5df826` and is
+pushed to `main`. Static deployment
+`149a4b66-bb13-4c2e-a34e-44624a0191d8` succeeded at
+<https://flex-meal-templates.sociobot.in>.
 
-No product code was modified.
+## What changed
 
-## What was done
-
-- Opened the live landing page cold in fresh 390×844 and 1440×900 Chromium
-  contexts and recorded the task, audience, and first action before scrolling.
-- Audited every landing and README sentence, label, heading, and action with
-  word counts and plain-language checks.
-- Exercised the one-click live demo, logging, reset, real-mode exit, IndexedDB
-  separation, and offline reload while recording network requests.
-- Read `.factory/claims.json` and ran each of its 11 commands separately from a
-  clean clone.
-- Re-ran the full test suite and production build from that clone.
-- Read every earlier review, polish report, and handoff, then verified every
-  earlier finding in both live behavior and current source.
-- Checked route metadata, deep links, back-button focus, fallback pages, live
-  headers, links, social/icon assets, mobile overflow, reduced motion, and
-  product-specific visual identity.
-- Ran live factory URL verification and settled Playwright axe scans.
+- Added `/app/new` and `/demo/new` to `public/sitemap.xml`.
+- Moved the SPA route metadata into `src/routes.ts` and made the sitemap
+  inventory derive from that one table, with explicit exclusions for edit,
+  404, and offline fallback routes.
+- Added the browser test `sitemap lists every stable route in the route
+  metadata inventory` so future route additions cannot silently miss the
+  sitemap.
+- Updated the catalog sentence to a 71-character, verb-first description.
 
 ## Verification
 
-Clean clone: `/tmp/flex-review3-clean-bZvvEE/repo` at `8898a3e`.
+### Fresh clone
 
-- `npm ci` — pass; zero reported vulnerabilities.
-- Every `.factory/claims.json` command — 11/11 pass.
-- `npm test` — 12 unit and 20 browser tests pass.
-- `npm run build` — pass; `dist/index.html` exists; JavaScript 11.46 kB gzip;
-  CSS 4.02 kB gzip.
-- Live JS/CSS SHA-256 values exactly match the clean-clone build.
-- Live demo — two sample templates, one prior log, persistent banner, reset,
-  real-data isolation, same-origin-only requests, and offline reload pass.
-- `/opt/fleet/lib/verify-url.sh` — pass on home, demo, Privacy, Terms, and a
-  missing route; no console errors.
-- Live axe — zero serious or critical violations on home, demo, Privacy,
-  Terms, SPA missing, static 404, and offline pages.
-- Link/status crawl — all discovered navigation destinations respond; a
-  genuine missing asset returns 404.
+Clean clone: `/tmp/flex-polish3-clean-zMEClL/repo` at `ed8c9d6`.
 
-## Known gap and next step
+- `npm ci` — passed; `npm audit --audit-level=high` reported zero
+  vulnerabilities.
+- Every command declared by `.factory/claims.json` passed independently:
+  `portion-adjust`, `offline-reload`, `local-only`, `csv-json-export`,
+  `demo-isolation`, `demo-sample`, `free-product`,
+  `validated-json-import`, `template-authoring`, `json-roundtrip`, and
+  `erase-confirmation` (11/11).
+- `npm test` — passed: 12 Vitest unit tests and 21 Playwright browser tests.
+  This includes browser axe coverage, keyboard navigation, mobile overflow,
+  metadata, fallback pages, recovery, privacy requests, and offline reload.
+- `npm run build` — passed and created `dist/index.html`; production output is
+  11.50 kB gzip JavaScript and 4.02 kB gzip CSS.
 
-Resolve F-3-1 by adding `/app/new` and `/demo/new` to the sitemap and adding a
-stable-route inventory test. Re-run the complete review; PASS requires no
-remaining finding.
+### Cold live recheck after deployment
+
+- `/opt/fleet/lib/verify-url.sh` passed with no console/page errors on home,
+  `?demo=1`, `/app/new`, `/demo/new`, Privacy, Terms, missing SPA route,
+  static 404, offline fallback, and both invalid edit URLs. Each had
+  `lang=en`, one H1, a main landmark, image alt text, and labelled buttons.
+  Screenshots and reports are in `.factory/evidence/polish-3/`.
+- A separate fresh Chromium check confirmed the exact seven-url sitemap
+  inventory, both newly added creation routes, a genuine missing asset HTTP
+  404, no horizontal overflow at 390 px, demo banner/reset/real-mode flow,
+  0.75 portion calculation of 386 kcal, same-origin-only demo requests,
+  service-worker offline reload, zero console/page errors, and zero
+  serious/critical axe violations on all product routes.
+
+## Run locally
+
+```sh
+npm ci
+npm test
+npm run build
+npm run preview
+```
+
+Open `http://127.0.0.1:4173/?demo=1` for the isolated sample. See
+`.factory/demo.md` for the storage and reset contract.
+
+## Known gaps
+
+None.
