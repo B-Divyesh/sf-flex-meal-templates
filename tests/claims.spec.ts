@@ -112,6 +112,22 @@ test('@claim:erase-confirmation asks before clearing only the active workspace',
   await page.getByRole('button', { name: 'Erase all records' }).click();
   expect(prompt).toContain('Erase every meal template and log in this browser?');
   await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
+
+  await page.goto('/app/new');
+  await page.getByLabel('Template name').fill('Real meal survives demo erase');
+  await page.getByLabel('Meal label').fill('Breakfast');
+  const ingredients = page.locator('.ingredient-editor');
+  await ingredients.nth(0).getByLabel('Ingredient name').fill('Toast');
+  await ingredients.nth(1).getByLabel('Ingredient name').fill('Eggs');
+  await page.getByRole('button', { name: 'Save meal template' }).click();
+  await expect(page.getByRole('heading', { name: 'Real meal survives demo erase' })).toBeVisible();
+
+  await page.goto('/demo');
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Erase all records' }).click();
+  await expect(page.getByRole('heading', { name: 'Build the meal you repeat' })).toBeVisible();
+  await page.goto('/app');
+  await expect(page.getByRole('heading', { name: 'Real meal survives demo erase' })).toBeVisible();
 });
 
 test('@claim:free-product exposes the full flow without payment', async ({ page }) => {
