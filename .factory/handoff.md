@@ -2,7 +2,8 @@
 
 ## Released repair — 2026-08-28
 
-Repair commit: `5493b2a85574648a36536d0b2e3ff5906cb267e7` (from review base
+Repair commits: `5493b2a85574648a36536d0b2e3ff5906cb267e7` and
+`c9459aa8ffceabd329471b09910d90b3cb5d42b5` (from review base
 `ae4c6e34975fa80f8b2ef055e492ac3feb0903c7`). Static deployment
 `6fa4ed5d-0bc9-4146-b320-56790b0c3644` completed successfully at
 <https://flex-meal-templates.sociobot.in>.
@@ -16,7 +17,7 @@ All three adversarial-review findings are repaired and mapped in
 
 ### Exact verification
 
-- Fresh clone `/tmp/flex-meal-templates-clean-ZsUJZk`: `npm ci`; each of the 9 commands in `.factory/claims.json`; `npm test` (12 Vitest + 15 Playwright); `npm run build`; and `npm audit --audit-level=high` all passed.
+- Fresh clone `/tmp/flex-meal-templates-final-clean-6wuZLO`: `npm ci`; each of the 9 commands in `.factory/claims.json`; `npm test` (12 Vitest + 15 Playwright); `npm run build`; and `npm audit --audit-level=high` all passed.
 - Local final gate: `npm test` passed (12 unit + 15 browser tests); `npm run build` produced `dist/`; JavaScript gzip is 11.45 KB and CSS gzip is 4.01 KB.
 - Accessibility: Playwright axe found zero serious/critical violations. The live 390×844 cold check covered home, `/?demo=1`, `/demo`, `/app`, `/app/new`, `/privacy`, `/terms`, and a missing route: one `h1`, one `main`, no overflow, and no console/page errors.
 - Privacy: the live complete demo request log contained no cross-origin request. No analytics, third-party font, or third-party script is loaded.
