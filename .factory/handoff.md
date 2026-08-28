@@ -29,6 +29,16 @@ The offline claim now asserts the initial “Weekday overnight oats” sample, t
 - Lighthouse 12.8.2 mobile: Performance 100, Accessibility 100, Best Practices 100, SEO 100; LCP 1.4 s, CLS 0, total blocking time 0 ms. Lab Lighthouse does not report INP without field interaction data. Report: `.factory/evidence/lighthouse-home.json`.
 - Dependency audit: `npm audit --audit-level=high` — 0 vulnerabilities.
 
+## Push, deployment, and live verification
+
+- Repair commit `4c46547` was pushed to `origin/main`.
+- `/opt/fleet/lib/deploy-static.sh flex-meal-templates ./dist` uploaded the 271,308-byte production artifact successfully (Azure deployment `dafdfd67-1761-45bb-b8dc-362a8dba436b`). The app remains a static offline PWA.
+- The configured identity <https://flex-meal-templates.sociobot.in> reached custom-domain `Ready` state with managed TLS and returns HTTP 200.
+- Live home and demo checks have the expected product titles, `lang=en`, one H1, a main landmark, no missing accessible names, and zero console errors. The committed screenshots and verifier JSON now use the live URL.
+- Live `/`, `/demo`, `/app`, `/app/new`, `/privacy`, `/terms`, `/missing-page`, manifest, service worker, offline fallback, robots, and sitemap requests all resolve through the configured policy.
+- Live response headers include the repository CSP, HSTS, `nosniff`, strict-origin referrer policy, and camera/microphone/geolocation/payment restrictions.
+- A fresh live Chromium context registered `flex-meals-v3`, went offline, reloaded `/demo`, and retained both “Weekday overnight oats” and the offline status. Returning to real mode showed an empty real workspace. The flow produced zero external requests and zero console errors.
+
 ## Run and deploy
 
 ```sh
@@ -38,7 +48,7 @@ npm run build
 npm run preview
 ```
 
-Artifact class remains `pwa-offline`. Deploy the contents of `./dist` with `/opt/fleet/lib/deploy-static.sh flex-meal-templates ./dist`.
+Artifact class remains `pwa-offline`. The deployed artifact is the contents of `./dist`; redeploy it with `/opt/fleet/lib/deploy-static.sh flex-meal-templates ./dist`.
 
 ## Known limits
 
