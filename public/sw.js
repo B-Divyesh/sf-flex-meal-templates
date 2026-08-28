@@ -1,4 +1,4 @@
-const VERSION = 'flex-meals-v3';
+const VERSION = 'flex-meals-v4';
 const CORE = ['/', '/app', '/demo', '/privacy', '/terms', '/offline.html', '/manifest.webmanifest', '/icons/favicon.svg', '/assets/meal-edition.webp', '/assets/meal-edition-768.webp'];
 
 self.addEventListener('install', (event) => {

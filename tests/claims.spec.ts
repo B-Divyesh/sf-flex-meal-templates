@@ -94,6 +94,36 @@ test('@claim:free-product exposes the full flow without payment', async ({ page 
   await expect(page.getByRole('link', { name: /buy|pay|upgrade/i })).toHaveCount(0);
 });
 
+test('@claim:validated-json-import rejects malformed backups without changing real records', async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+
+  await page.goto('/app/new');
+  await page.getByLabel('Template name').fill('Keep this breakfast');
+  await page.getByLabel('Meal label').fill('Breakfast');
+  const ingredients = page.locator('.ingredient-editor');
+  await ingredients.nth(0).getByLabel('Ingredient name').fill('Porridge');
+  await ingredients.nth(1).getByLabel('Ingredient name').fill('Berries');
+  await page.getByRole('button', { name: 'Save meal template' }).click();
+  await expect(page.getByRole('heading', { name: 'Keep this breakfast' })).toBeVisible();
+
+  const before = await readRealState(page);
+  await page.locator('#import-file').setInputFiles({
+    name: 'malformed.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from('{"version":1,"templates":[{}],"logs":[]}')
+  });
+
+  await expect(page.getByRole('status')).toHaveText('That file is not a valid backup. Choose a JSON backup exported by this app. Your records were not changed.');
+  await expect(page.getByRole('heading', { name: 'Keep this breakfast' })).toBeVisible();
+  expect(await readRealState(page)).toEqual(before);
+
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Keep this breakfast' })).toBeVisible();
+  expect(await readRealState(page)).toEqual(before);
+  expect(pageErrors).toEqual([]);
+});
+
 test('landing and demo have no serious accessibility violations', async ({ page }) => {
   for (const path of ['/', '/demo', '/privacy']) {
     await page.goto(path);
@@ -121,4 +151,16 @@ async function streamText(stream: NodeJS.ReadableStream | null): Promise<string>
   const chunks: Buffer[] = [];
   for await (const chunk of stream) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   return Buffer.concat(chunks).toString('utf8');
+}
+
+async function readRealState(page: import('@playwright/test').Page): Promise<unknown> {
+  return page.evaluate(() => new Promise((resolve, reject) => {
+    const open = indexedDB.open('flex-meals-real', 1);
+    open.onerror = () => reject(open.error);
+    open.onsuccess = () => {
+      const request = open.result.transaction('app').objectStore('app').get('state');
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result as unknown);
+    };
+  }));
 }

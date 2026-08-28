@@ -40,7 +40,8 @@ npm run preview
 
 - Export CSV downloads dated meal logs and calculated nutrition totals.
 - Export JSON downloads every template and log as a restorable backup.
-- Import JSON replaces the current browser database after validation.
+- Import JSON checks the complete backup before replacing the current browser database.
+- Invalid backups are rejected without changing saved records.
 - Erase all records requires confirmation and cannot be undone.
 
 Nutrition values are user-entered estimates. Flex Meal Templates is not medical or dietary advice.

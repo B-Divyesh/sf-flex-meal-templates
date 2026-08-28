@@ -48,3 +48,30 @@ test('keyboard users can enter the demo and adjust a portion', async ({ page }) 
   for (let press = 0; press < 5; press += 1) await page.keyboard.press('ArrowLeft');
   await expect(page.locator('[data-nutrient="calories"] [data-total]')).toHaveText('386');
 });
+
+test('a workspace corrupted by the previous release opens recovery controls', async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  await page.goto('/app');
+  await page.evaluate(() => new Promise<void>((resolve, reject) => {
+    const open = indexedDB.open('flex-meals-real', 1);
+    open.onerror = () => reject(open.error);
+    open.onsuccess = () => {
+      const transaction = open.result.transaction('app', 'readwrite');
+      transaction.objectStore('app').put({ version: 1, templates: [{}], logs: [] }, 'state');
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    };
+  }));
+
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Saved records need attention' })).toBeVisible();
+  await expect(page.getByText('The records have not been changed.')).toBeVisible();
+
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Erase damaged records' }).click();
+  await expect(page.getByRole('heading', { name: 'Build the meal you repeat' })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Build the meal you repeat' })).toBeVisible();
+  expect(pageErrors).toEqual([]);
+});

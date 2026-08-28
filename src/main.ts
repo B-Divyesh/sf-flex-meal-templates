@@ -18,6 +18,7 @@ const titles: Record<string, string> = {
 
 let store: MealStore | undefined;
 let editorIngredientCount = 0;
+const invalidBackupMessage = 'That file is not a valid backup. Choose a JSON backup exported by this app. Your records were not changed.';
 
 function escapeHtml(value: unknown): string {
   return String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' })[character] ?? character);
@@ -59,7 +60,7 @@ function shell(content: string, options: { demo?: boolean; page?: string } = {})
     <footer class="site-footer">
       <p>Adjust recurring meals without making copies.</p>
       <nav aria-label="Footer navigation">${link('/privacy', 'Privacy')} ${link('/terms', 'Terms')} <a href="https://sociobot.in" rel="external">Built by Param Factory <span class="sr-only">(external site)</span></a></nav>
-      <p>Version 1.0.0 · Original generated artwork</p>
+      <p>Version 1.0.1 · Original generated artwork</p>
     </footer>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>`;
 }
@@ -204,11 +205,25 @@ function recentLogsMarkup(): string {
 }
 
 function dataControlsMarkup(): string {
-  return `<section class="data-controls" aria-labelledby="data-title"><h2 id="data-title">Own your records</h2><p>Download a complete backup, restore one, or erase this browser’s records.</p><div class="control-row">
+  return `<section class="data-controls" aria-labelledby="data-title"><h2 id="data-title">Own your records</h2><p>Download a complete backup, restore one, or erase this browser’s records. Imports are checked before they replace your records.</p><div class="control-row">
     <button class="button secondary" type="button" data-action="export-json">Export JSON backup</button>
     <label class="button secondary file-button">Import JSON backup<input id="import-file" type="file" accept="application/json,.json" /></label>
     <button class="button danger" type="button" data-action="delete-all">Erase all records</button>
   </div></section>`;
+}
+
+function recoveryPage(demo: boolean): string {
+  return shell(`<main id="main" class="page recovery-page">
+    <p class="kicker">Recovery</p>
+    <h1 tabindex="-1">Saved records need attention</h1>
+    <p>This browser contains meal records the app cannot read. The records have not been changed.</p>
+    <h2>Choose how to recover</h2>
+    <p>${demo ? 'Reset the sample to restore a clean demo.' : 'Import a valid JSON backup, or erase the damaged records to start over.'}</p>
+    <div class="control-row">
+      ${demo ? '' : '<label class="button secondary file-button">Import JSON backup<input id="import-file" type="file" accept="application/json,.json" /></label>'}
+      <button class="button danger" type="button" data-action="recover-records">${demo ? 'Reset demo' : 'Erase damaged records'}</button>
+    </div>
+  </main>`, { demo });
 }
 
 async function appPage(): Promise<string> {
@@ -217,8 +232,9 @@ async function appPage(): Promise<string> {
   try {
     await store.load();
   } catch {
-    return shell(`<main id="main" class="page"><h1 tabindex="-1">Your meals could not open</h1><p>Browser storage is unavailable. Allow site storage, then reload this page.</p><button class="button primary" onclick="location.reload()">Reload the page</button></main>`, { demo });
+    return shell(`<main id="main" class="page"><h1 tabindex="-1">Your meals could not open</h1><p>Browser storage is unavailable. Allow site storage, then reload this page.</p><button class="button primary" type="button" data-action="reload-page">Reload the page</button></main>`, { demo });
   }
+  if (store.needsRecovery) return recoveryPage(demo);
   const params = new URLSearchParams(location.search);
   const active = store.data.templates.find((item) => item.id === params.get('meal')) ?? store.data.templates[0];
   return shell(`<main id="main" class="app-page">
@@ -284,8 +300,11 @@ async function render(push = false): Promise<void> {
   else if (path === '/app/edit' || path === '/demo/edit') {
     const demo = isDemo();
     if (!store || store.demo !== demo) { store = new MealStore(demo); await store.load(); }
-    const template = store.data.templates.find((item) => item.id === new URLSearchParams(location.search).get('id'));
-    app.innerHTML = template ? templateForm(template) : notFoundPage();
+    if (store.needsRecovery) app.innerHTML = recoveryPage(demo);
+    else {
+      const template = store.data.templates.find((item) => item.id === new URLSearchParams(location.search).get('id'));
+      app.innerHTML = template ? templateForm(template) : notFoundPage();
+    }
   } else app.innerHTML = notFoundPage();
   document.title = titles[path] ?? (path.endsWith('/new') ? 'New meal — Flex Meal Templates' : path.endsWith('/edit') ? 'Edit meal — Flex Meal Templates' : titles['/404']);
   const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
@@ -397,6 +416,7 @@ function controlNumber(row: Element, name: string): number {
 async function saveTemplate(form: HTMLFormElement): Promise<void> {
   const demo = isDemo();
   if (!store || store.demo !== demo) { store = new MealStore(demo); await store.load(); }
+  if (store.needsRecovery) { navigate(pathBase()); return; }
   const error = document.querySelector<HTMLElement>('#form-error');
   const rows = [...form.querySelectorAll<HTMLElement>('.ingredient-editor')];
   if (rows.length === 0) { if (error) error.textContent = 'Add at least one ingredient before saving.'; return; }
@@ -462,6 +482,15 @@ async function handleClick(event: MouseEvent): Promise<void> {
     (event.target as Element).closest('.ingredient-editor')?.remove();
   } else if (action === 'reset-demo' && store) {
     await store.resetDemo(); await render(); showToast('Sample data reset.');
+  } else if (action === 'reload-page') {
+    location.reload();
+  } else if (action === 'recover-records' && store) {
+    const message = store.demo ? 'Reset the demo and discard its damaged sample data?' : 'Erase the damaged records in this browser? This cannot be undone.';
+    if (confirm(message)) {
+      if (store.demo) await store.resetDemo(); else await store.eraseAll();
+      await render();
+      showToast(store.demo ? 'Sample data reset.' : 'Damaged records erased. You can start again.');
+    }
   } else if (action === 'export-csv') exportCsv();
   else if (action === 'export-json' && store) download('flex-meal-templates-backup.json', 'application/json', JSON.stringify(store.data, null, 2));
   else if (action === 'delete-template' && store) {
@@ -469,7 +498,7 @@ async function handleClick(event: MouseEvent): Promise<void> {
     const template = store.data.templates.find((item) => item.id === id);
     if (template && confirm(`Delete “${template.name}”? Existing log records will remain.`)) { store.data.templates = store.data.templates.filter((item) => item.id !== id); await store.save(); navigate(pathBase()); showToast('Meal template deleted.'); }
   } else if (action === 'delete-all' && store) {
-    if (confirm('Erase every meal template and log in this browser? This cannot be undone.')) { store.data = { version: 1, templates: [], logs: [] }; await store.save(); await render(); showToast('All records erased.'); }
+    if (confirm('Erase every meal template and log in this browser? This cannot be undone.')) { await store.eraseAll(); await render(); showToast('All records erased.'); }
   }
 }
 
@@ -489,8 +518,18 @@ async function handleSubmit(event: SubmitEvent): Promise<void> {
 async function handleChange(event: Event): Promise<void> {
   const target = event.target as HTMLInputElement | HTMLSelectElement;
   if (target.id === 'import-file' && target instanceof HTMLInputElement && target.files?.[0] && store) {
-    try { await store.importData(JSON.parse(await target.files[0].text()) as unknown); await render(); showToast('Backup imported.'); }
-    catch (error) { showToast(error instanceof Error ? error.message : 'The backup could not be imported.'); }
+    try {
+      await store.importData(JSON.parse(await target.files[0].text()) as unknown);
+      await render();
+      showToast('Backup imported.');
+    } catch (error) {
+      const message = error instanceof SyntaxError || (error instanceof Error && error.message === 'This file is not a Flex Meal Templates backup.')
+        ? invalidBackupMessage
+        : 'The backup is valid, but browser storage could not save it. Your records were not changed.';
+      showToast(message);
+    } finally {
+      target.value = '';
+    }
     return;
   }
   const templateId = document.querySelector<HTMLFormElement>('#log-form')?.dataset.templateId;

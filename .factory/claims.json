@@ -40,5 +40,12 @@
     "where": "landing facts, README",
     "test": "npm run test:e2e -- --grep @claim:free-product",
     "sandbox": "fresh demo; assert the full log and export actions are available with no payment, purchase, or upgrade action"
+  },
+  {
+    "id": "validated-json-import",
+    "claim": "Invalid JSON backups are rejected without changing saved records.",
+    "where": "data controls, README",
+    "test": "npm run test:e2e -- --grep @claim:validated-json-import",
+    "sandbox": "fresh real workspace; save a meal, import the verifier's malformed fixture, compare IndexedDB before and after, reload, and assert the meal still renders without page errors"
   }
 ]
