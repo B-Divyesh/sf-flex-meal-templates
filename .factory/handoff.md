@@ -1,4 +1,29 @@
-# Flex Meal Templates — repair handoff
+# Flex Meal Templates — verification handoff
+
+## Independent release status — 2026-08-28
+
+**PASS — candidate `541f5032e0ad840c9725e4cbff65bf47983e3fd4` is acceptable
+for release at <https://flex-meal-templates.sociobot.in>.**
+
+An independent clean-clone verification ran every command in
+`.factory/claims.json` separately (7/7 passed), then `npm test` (Vitest 12/12,
+Playwright 12/12), deterministic one-worker Playwright (12/12), production
+build, and high-severity dependency audit (0 vulnerabilities). The live
+JavaScript, CSS, and service-worker SHA-256 values match the candidate build.
+
+Live desktop and 390px checks covered first-read/demo entry, adjusted portion
+logging, 3× and zero boundaries, inverted-band recovery, malformed-backup
+rejection with unchanged IndexedDB, keyboard/focus, reduced motion, offline
+reload, privacy request capture, response headers/caching, and axe. No
+serious/critical axe findings, console/page errors, cross-origin product
+requests, or defects were found. Full exact evidence is in
+`.factory/verification-3.md`.
+
+The product remains a static local-only PWA. It has no account, server-side
+endpoint, payment, library/CLI API, or sign-in integration; rate-limit,
+concurrency, package-consumer, and Entra checks are not applicable.
+
+## Prior repair context
 
 ## Release status
 
