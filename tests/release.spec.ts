@@ -37,7 +37,8 @@ test('keyboard users can enter the demo and adjust a portion', async ({ page }) 
   }
   await expect(page.getByRole('link', { name: 'Try it with sample data' })).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page).toHaveURL(/\?demo=1$/);
+  await expect(page.getByText('Demo — sample data, nothing is saved')).toBeVisible();
 
   const multiplier = page.getByRole('slider', { name: /^Serving multiplier/ });
   for (let press = 0; press < 20; press += 1) {

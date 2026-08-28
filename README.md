@@ -2,13 +2,13 @@
 
 Adjust saved meal portions and keep each log inside its nutrition budget.
 
-Flex Meal Templates is for people who repeat meals but change the serving each time. Save 10–30 personal meal templates, set calorie and macro bands, choose ingredient substitutes, and adjust one ingredient before logging. The original template stays unchanged.
+Flex Meal Templates is for people who repeat meals but change the serving each time. Save personal meal templates, set nutrition bands, and adjust a meal before logging. The original template stays unchanged.
 
-The app works offline after the first visit. Meal templates and logs stay in browser-local IndexedDB. It has no account, food search, barcode lookup, analytics, or health advice.
+The app works offline after the first visit. Meal templates and logs stay in browser-local storage. The complete product is free to use.
 
 ## Try the isolated demo
 
-Open `/demo` locally or visit <https://flex-meal-templates.sociobot.in/demo>. It includes two realistic meal templates and one earlier log. Demo records use a separate IndexedDB database and never enter real records. **Reset demo** restores the bundled sample.
+Open `/?demo=1` locally or visit <https://flex-meal-templates.sociobot.in/?demo=1>. The sample opens two meal templates and one earlier log. Demo records use a separate browser database and never enter real records. **Reset demo** restores the bundled sample.
 
 ## Run locally
 
@@ -42,7 +42,7 @@ npm run preview
 - Export JSON downloads every template and log as a restorable backup.
 - Import JSON checks the complete backup before replacing the current browser database.
 - Invalid backups are rejected without changing saved records.
-- Erase all records requires confirmation and cannot be undone.
+- Erase all records asks for confirmation before clearing the active browser workspace.
 
 Nutrition values are user-entered estimates. Flex Meal Templates is not medical or dietary advice.
 

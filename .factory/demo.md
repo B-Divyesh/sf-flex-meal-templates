@@ -1,6 +1,6 @@
 # Demo sandbox
 
-- URL: `https://flex-meal-templates.sociobot.in/demo` (local: `http://localhost:5173/demo`).
+- URL: `https://flex-meal-templates.sociobot.in/?demo=1` (local: `http://localhost:5173/?demo=1`). `/demo` is an equivalent direct route.
 - Sample: “Weekday overnight oats” with two substitutions, “Lentil desk lunch” with one substitution, meal-specific nutrition bands, and one earlier adjusted log.
 - Storage: IndexedDB database `flex-meals-demo`, separate from the real `flex-meals-real` database.
 - Reset: use **Reset demo** in the persistent red banner. It replaces demo changes with the bundled sample.

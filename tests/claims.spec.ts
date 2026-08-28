@@ -87,6 +87,33 @@ test('@claim:demo-isolation keeps demo and real databases separate', async ({ pa
   await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
 });
 
+test('@claim:demo-sample opens the isolated sample from the one-click query path', async ({ page }) => {
+  await page.goto('/?demo=1');
+  await expect(page).toHaveURL(/\?demo=1$/);
+  await expect(page.getByText('Demo — sample data, nothing is saved')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Adjust a meal for today' })).toBeVisible();
+  await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('Lentil desk lunch', { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole('row')).toHaveCount(2);
+
+  await page.getByRole('button', { name: 'Log adjusted meal' }).click();
+  await expect(page.getByRole('row')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Reset demo' }).click();
+  await expect(page.getByRole('row')).toHaveCount(2);
+  await page.getByRole('link', { name: 'Start for real' }).click();
+  await expect(page.getByRole('heading', { name: 'Build the meal you repeat' })).toBeVisible();
+});
+
+test('@claim:erase-confirmation asks before clearing only the active workspace', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
+  let prompt = '';
+  page.once('dialog', async (dialog) => { prompt = dialog.message(); await dialog.dismiss(); });
+  await page.getByRole('button', { name: 'Erase all records' }).click();
+  expect(prompt).toContain('Erase every meal template and log in this browser?');
+  await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
+});
+
 test('@claim:free-product exposes the full flow without payment', async ({ page }) => {
   await page.goto('/demo');
   await expect(page.getByRole('button', { name: 'Log adjusted meal' })).toBeVisible();
@@ -130,6 +157,27 @@ test('landing and demo have no serious accessibility violations', async ({ page 
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? ''))).toEqual([]);
   }
+});
+
+test('routes update title, descriptions, and social descriptions', async ({ page }) => {
+  const expected = [
+    ['/app', 'Your meals — Flex Meal Templates', 'Save meal templates, adjust today’s portions, and compare nutrition with each meal’s bands.'],
+    ['/app/new', 'New meal — Flex Meal Templates', 'Create a reusable meal template with ingredients and nutrition bands.'],
+    ['/demo', 'Demo — Flex Meal Templates', 'Try two sample meals and one saved log without changing your personal records.'],
+    ['/privacy', 'Privacy — Flex Meal Templates', 'Read how Flex Meal Templates stores meal records in your browser and keeps demo data separate.'],
+    ['/terms', 'Terms — Flex Meal Templates', 'Read the terms for using Flex Meal Templates as a personal meal-recording utility.'],
+    ['/missing-page', 'Page not found — Flex Meal Templates', 'This Flex Meal Templates page could not be found.']
+  ] as const;
+  for (const [path, title, description] of expected) {
+    await page.goto(path);
+    await expect(page).toHaveTitle(title);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', description);
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', description);
+    await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', description);
+  }
+  await page.goto('/?demo=1');
+  await expect(page).toHaveTitle('Demo — Flex Meal Templates');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://flex-meal-templates.sociobot.in/demo');
 });
 
 test('creates a real meal template with a substitute', async ({ page }) => {

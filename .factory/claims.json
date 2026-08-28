@@ -35,6 +35,13 @@
     "sandbox": "fresh browser context; log in /demo, open /app and assert empty state, then reset the demo and assert its original log count"
   },
   {
+    "id": "demo-sample",
+    "claim": "The one-click sample opens two editable meals and one earlier log without saving to personal records.",
+    "where": "landing first-screen action, README, demo documentation",
+    "test": "npm run test:e2e -- --grep @claim:demo-sample",
+    "sandbox": "fresh browser context at /?demo=1; assert the persistent demo banner, both named sample meals, one earlier log, and Reset demo restoring that log"
+  },
+  {
     "id": "free-product",
     "claim": "The complete product is free to use.",
     "where": "landing facts, README",
@@ -47,5 +54,12 @@
     "where": "data controls, README",
     "test": "npm run test:e2e -- --grep @claim:validated-json-import",
     "sandbox": "fresh real workspace; save a meal, import the verifier's malformed fixture, compare IndexedDB before and after, reload, and assert the meal still renders without page errors"
+  },
+  {
+    "id": "erase-confirmation",
+    "claim": "Erasing records asks for confirmation before clearing the active browser workspace.",
+    "where": "landing privacy section, data controls, README",
+    "test": "npm run test:e2e -- --grep @claim:erase-confirmation",
+    "sandbox": "fresh demo; dismiss the erase confirmation and assert the named sample meal remains visible"
   }
 ]

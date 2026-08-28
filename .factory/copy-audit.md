@@ -1,46 +1,42 @@
 # Landing copy audit
 
-Audited 2026-08-28 against the `plain-words` rules. Counts treat hyphenated terms and numbers as one word. No line exceeds 22 words. No line contains a banned word.
+Audited 2026-08-28 against the plain-words rules. Counts treat hyphenated
+terms, numbers, and paths as one word. No landing sentence exceeds 22 words
+or uses a banned marketing word.
 
 ## First screen
 
-| Copy | Words | Result |
+| Copy | Words | Evidence |
 | --- | ---: | --- |
-| Adjust saved meals as you log | 6 | Pass |
-| For people who repeat meals but change portions to match each meal’s nutrition budget. | 14 | Pass |
-| Try it with sample data | 5 | Pass |
-| It opens two editable meals. | 5 | Pass |
-| Nothing enters your records. | 4 | Pass |
-| Create your first template | 4 | Pass |
-| Works offline after the first visit. | 6 | Pass |
-| Your records stay in this browser. | 6 | Pass |
-| Free. | 1 | Pass |
-| Export CSV or JSON. | 4 | Pass |
+| Adjust saved meals as you log | 6 | Product task |
+| For people who repeat meals but change portions to match each meal’s nutrition budget. | 14 | Product audience |
+| Try it with sample data | 5 | `demo-sample` |
+| Open two sample meals. | 4 | `demo-sample` |
+| Nothing enters your records. | 4 | `demo-isolation` |
+| Create your first template | 4 | Product action |
+| Works offline after the first visit. | 6 | `offline-reload` |
+| Your records stay in this browser. | 6 | `local-only` |
+| Free. Export CSV or JSON. | 5 | `free-product`, `csv-json-export` |
 
-Read-aloud result: the headline, situation sentence, action, and outcome fit in one breath and name the first step.
+Read-aloud result: the headline, audience, first action, and result fit in one
+breath and name the first step.
 
-## Remaining landing sentences
+## Remaining landing copy
 
-| Copy | Words | Result |
+| Copy | Words | Evidence |
 | --- | ---: | --- |
-| A kitchen scale and ingredient slips arranged like a newspaper layout. | 11 | Pass |
-| One base meal. | 3 | Pass |
-| Today’s portions stay editable. | 4 | Pass |
-| See the change before you log it | 7 | Pass |
-| Enter each ingredient and its estimated nutrition. | 7 | Pass |
-| Choose calorie and macro ranges for this meal. | 8 | Pass |
-| Change the serving or a single ingredient. | 7 | Pass |
-| Then export the record. | 4 | Pass |
-| You enter the nutrition estimates. | 5 | Pass |
-| This tool does not search foods, scan barcodes, create meal plans, or give health advice. | 15 | Pass |
-| Your templates and logs use browser storage. | 7 | Pass |
-| You can export a backup or erase every record. | 9 | Pass |
-| Adjust recurring meals without making copies. | 6 | Pass |
-| Original generated artwork | 3 | Pass |
-
-## Interface fragments and actions
-
-All remaining visible strings are labels, headings, or button actions: “The portion edition,” “Live proof,” “Saved meal,” “Today,” “How it works,” “Save the base meal,” “Set the meal’s bands,” “Adjust and log,” “Small print,” “Privacy,” and “Terms.” Each is 7 words or fewer and contains no banned word.
+| A kitchen scale and ingredient slips arranged like a newspaper layout. | 11 | Image alt text |
+| One base meal. Today’s portions stay editable. | 7 | `portion-adjust` |
+| Meal preview | 2 | Section heading |
+| How it works | 3 | Section heading |
+| Enter each ingredient and its estimated nutrition. | 7 | Product instruction |
+| Choose calorie and macro ranges for this meal. | 8 | Product instruction |
+| Change the serving or a single ingredient. | 7 | `portion-adjust` |
+| Then export the record. | 4 | `csv-json-export` |
+| Limits and privacy | 3 | Section heading |
+| You enter the nutrition estimates for each ingredient. | 8 | Product instruction |
+| Your templates and logs use browser storage. | 7 | `local-only` |
+| Export JSON backups or erase this browser’s records. | 9 | `csv-json-export`, `erase-confirmation` |
 
 ## Terminology table
 
@@ -55,4 +51,5 @@ All remaining visible strings are labels, headings, or button actions: “The po
 | Flat log download | CSV export |
 | Isolated sample mode | demo |
 
-Catalog description: “Adjust saved meal portions and keep each log inside its nutrition budget.” It is 11 words, 72 characters, and starts with a verb.
+Catalog description: “Adjust saved meal portions and compare each log with its
+nutrition bands.” It has 11 words, 72 characters, and starts with a verb.
