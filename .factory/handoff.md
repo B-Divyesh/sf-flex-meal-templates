@@ -1,4 +1,35 @@
-# Flex Meal Templates — verification handoff
+# Flex Meal Templates — review handoff
+
+## Adversarial first-read review 1 — 2026-08-28
+
+**Result: FAIL.** No product code was changed. The review is recorded in
+`.factory/review-1.md` and committed with this handoff.
+
+Cold live checks, the isolated demo, request logging, offline reload,
+deep-link/crawl, the historical corrupt-backup regression, and all seven
+declared claims passed. The review found three remaining issues: decorative
+and context-free landing headings; unlisted/untested user-facing claims
+(including the unsupported README “10–30” capacity statement); and reused
+landing metadata on non-landing routes.
+
+### How verified
+
+- Fresh live Chromium contexts at 390×844 and desktop; direct demo and offline
+  service-worker reload; same-origin request capture.
+- Clean temporary clone: `npm ci`, every `.factory/claims.json` command
+  separately (7/7 passed), `npm test` (12/12 passed), and `npm run build`
+  (`dist/` produced).
+- Live malformed-backup regression: invalid backup rejected, real record
+  remained after reload, no page errors.
+
+### Next steps
+
+Fix F-1-1 through F-1-3 in `.factory/review-1.md`, then run the full review
+checklist from a fresh browser context and clean clone.
+
+---
+
+# Previous verification handoff
 
 ## Independent release status — 2026-08-28
 
