@@ -1,6 +1,6 @@
 {
   "url": "https://flex-meal-templates.sociobot.in/demo",
-  "loadMs": 556,
+  "loadMs": 984,
   "errors": [],
   "a11y": {
     "title": "Demo — Flex Meal Templates",
@@ -9,6 +9,6 @@
     "main": true,
     "imgsMissingAlt": 0,
     "buttonsUnlabeled": 0,
-    "textLength": 1377
+    "textLength": 1431
   }
 }

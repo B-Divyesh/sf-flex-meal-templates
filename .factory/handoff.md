@@ -40,17 +40,27 @@ The rejected candidate accepted `{"version":1,"templates":[{}],"logs":[]}`, over
 - Offline/update: `@claim:offline-reload` passed from a fresh context after service-worker control, then reloaded `/demo` offline with the bundled sample and visible offline notice. Cache version `flex-meals-v4` and start URL `/app?v=2` were asserted in the built files.
 - Response policy: the built SPA fallback, designed 404 rewrite, CSP including header-only `frame-ancestors`, `nosniff`, referrer policy, permissions policy, standalone manifest, icons, and 12-route local crawl all passed.
 - Lighthouse 12.8.2 mobile: Performance 100, Accessibility 100, Best Practices 100, SEO 100; LCP 1.5 s, CLS 0, total blocking time 0 ms. INP has no lab value without field interaction data.
-- Package/consumer verification, API concurrency, rate-limit behavior, and live identity are not applicable to this static, local-only PWA. The repository contains no package API, backend, account, or authority configuration.
+- Package/consumer verification, API concurrency, rate-limit behavior, and sign-in authority checks are not applicable to this static, local-only PWA. The repository contains no package API, backend, account, or authority configuration.
 
 ## Deployment and live evidence
 
-The production artifact is `./dist`. Deploy with:
+Repair commit `4f1a97bb90c47af12c54a9771214ad190ecf2915` was pushed to `origin/main`. The production artifact remains `./dist` and was deployed with:
 
 ```sh
 /opt/fleet/lib/deploy-static.sh flex-meal-templates ./dist
 ```
 
-Deployment and post-deploy identity evidence are recorded below after upload.
+Azure Static Web Apps deployment `b6dbb65e-ea1a-439e-8006-5304afedbaa4` uploaded the 283,877-byte artifact successfully. The existing app remains in `centralus`; the custom domain is `Ready` and managed HTTPS returns 200.
+
+- Live SHA-256 matches the local build for `index-HcEB1IqC.js` (`aefcfe6f…`), `index-BHLcJEU4.css` (`9215c5de…`), and `sw.js` (`be0f3054…`). This proves the live identity is the repaired artifact.
+- Factory URL checks on live home and demo passed desktop and 390 px captures with the expected route title, `lang=en`, one H1, a main landmark, complete alt/button names, and zero console errors. Evidence is in `.factory/evidence/home/` and `.factory/evidence/demo/`.
+- The verifier's exact malformed backup was exercised live after creating a real record. It was rejected with the plain message, IndexedDB remained identical, reload preserved the meal, and no console/page error occurred.
+- The previous-candidate corrupt IndexedDB value was also injected live. Reload opened recovery; confirmed erase restored the empty workspace; the next reload remained healthy.
+- A fresh live context registered cache `flex-meals-v4`, reloaded the bundled demo offline, retained “Weekday overnight oats,” and showed the offline notice with no errors.
+- The live malformed-import flow at 390×844 had no overflow, zero serious/critical axe findings, zero cross-origin requests, and zero console/page errors.
+- Live `/`, `/demo`, `/app`, `/app/new`, `/privacy`, `/terms`, missing route, offline page, manifest, service worker, robots, and sitemap all return 200.
+- Live headers include the repository CSP, HSTS, `nosniff`, strict-origin referrer policy, restrictive permissions policy, and one-year immutable caching for the hashed JavaScript.
+- Live Lighthouse 12.8.2 mobile: Performance 100, Accessibility 100, Best Practices 100, SEO 100; LCP 1.1 s, CLS 0, total blocking time 0 ms. The report is `.factory/evidence/lighthouse-home.json`.
 
 ## Run and verify
 
