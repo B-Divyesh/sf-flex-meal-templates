@@ -1,5 +1,5 @@
-const VERSION = 'flex-meals-v5';
-const CORE = ['/', '/app', '/demo', '/privacy', '/terms', '/offline.html', '/manifest.webmanifest', '/icons/favicon.svg', '/assets/meal-edition.webp', '/assets/meal-edition-768.webp'];
+const VERSION = 'flex-meals-v6';
+const CORE = ['/', '/app', '/demo', '/privacy', '/terms', '/offline.html', '/fallback.css', '/manifest.webmanifest', '/icons/favicon.svg', '/assets/meal-edition.webp', '/assets/meal-edition-768.webp'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {

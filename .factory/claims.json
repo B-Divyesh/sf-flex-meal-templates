@@ -1,10 +1,10 @@
 [
   {
     "id": "portion-adjust",
-    "claim": "Adjust a saved meal's portion and compare it with that meal's nutrition bands without changing the template.",
+    "claim": "Adjust a meal template's portion and compare it with that meal's nutrition ranges without changing the meal template.",
     "where": "landing headline, live preview, logging workspace",
     "test": "npm run test:e2e -- --grep @claim:portion-adjust",
-    "sandbox": "fresh browser context at /demo; change the multiplier, assert totals and band state, log it, then confirm the base amount remains 60 g"
+    "sandbox": "fresh browser context at /demo; change the portion multiplier, assert totals and range state, log it, then confirm the base amount remains 60 g"
   },
   {
     "id": "offline-reload",
@@ -54,6 +54,20 @@
     "where": "data controls, README",
     "test": "npm run test:e2e -- --grep @claim:validated-json-import",
     "sandbox": "fresh real workspace; save a meal, import the verifier's malformed fixture, compare IndexedDB before and after, reload, and assert the meal still renders without page errors"
+  },
+  {
+    "id": "template-authoring",
+    "claim": "Create a meal template with custom nutrition ranges, then use those ranges when logging.",
+    "where": "landing how-it-works section, meal-template form, README",
+    "test": "npm run test:e2e -- --grep @claim:template-authoring",
+    "sandbox": "fresh browser context entered through /?demo=1; leave the demo, create a real meal template with non-default calorie and macro ranges, reload it, confirm every range, then log against those ranges"
+  },
+  {
+    "id": "json-roundtrip",
+    "claim": "A JSON backup restores every exported meal template and log.",
+    "where": "data controls, README",
+    "test": "npm run test:e2e -- --grep @claim:json-roundtrip",
+    "sandbox": "fresh browser context at /demo; export the complete sample, erase the demo workspace, import that exact file, and compare every restored template and log with the export"
   },
   {
     "id": "erase-confirmation",

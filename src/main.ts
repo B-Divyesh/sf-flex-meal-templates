@@ -10,13 +10,13 @@ const app: HTMLDivElement = root;
 type RouteMeta = { title: string; description: string; robots?: string };
 
 const routeMeta: Record<string, RouteMeta> = {
-  '/': { title: 'Flex Meal Templates — Adjust meals as you log', description: 'Adjust saved meal portions, compare nutrition bands, and log today without changing the base meal.' },
-  '/app': { title: 'Your meals — Flex Meal Templates', description: 'Save meal templates, adjust today’s portions, and compare nutrition with each meal’s bands.', robots: 'noindex' },
-  '/demo': { title: 'Demo — Flex Meal Templates', description: 'Try two sample meals and one saved log without changing your personal records.', robots: 'noindex' },
-  '/app/new': { title: 'New meal — Flex Meal Templates', description: 'Create a reusable meal template with ingredients and nutrition bands.', robots: 'noindex' },
-  '/app/edit': { title: 'Edit meal — Flex Meal Templates', description: 'Edit a saved meal template, its ingredients, and its nutrition bands.', robots: 'noindex' },
-  '/demo/new': { title: 'New sample meal — Flex Meal Templates', description: 'Add a meal to the isolated sample workspace.', robots: 'noindex' },
-  '/demo/edit': { title: 'Edit sample meal — Flex Meal Templates', description: 'Edit a meal in the isolated sample workspace.', robots: 'noindex' },
+  '/': { title: 'Flex Meal Templates — Adjust meal portions', description: 'Adjust meal portions, compare them with saved nutrition ranges, and log them without changing the meal template.' },
+  '/app': { title: 'Your meals — Flex Meal Templates', description: 'Save meal templates, adjust today’s portions, and compare nutrition with each meal’s ranges.', robots: 'noindex' },
+  '/demo': { title: 'Demo — Flex Meal Templates', description: 'Try two sample meal templates and one earlier log without changing your records.', robots: 'noindex' },
+  '/app/new': { title: 'New meal — Flex Meal Templates', description: 'Create a meal template with ingredients and custom nutrition ranges.', robots: 'noindex' },
+  '/app/edit': { title: 'Edit meal — Flex Meal Templates', description: 'Edit a meal template, its ingredients, and its nutrition ranges.', robots: 'noindex' },
+  '/demo/new': { title: 'New sample meal — Flex Meal Templates', description: 'Add a meal template to the separate sample workspace.', robots: 'noindex' },
+  '/demo/edit': { title: 'Edit sample meal — Flex Meal Templates', description: 'Edit a meal template in the separate sample workspace.', robots: 'noindex' },
   '/privacy': { title: 'Privacy — Flex Meal Templates', description: 'Read how Flex Meal Templates stores meal records in your browser and keeps demo data separate.' },
   '/terms': { title: 'Terms — Flex Meal Templates', description: 'Read the terms for using Flex Meal Templates as a personal meal-recording utility.' },
   '/404': { title: 'Page not found — Flex Meal Templates', description: 'This Flex Meal Templates page could not be found.', robots: 'noindex' }
@@ -53,7 +53,7 @@ function shell(content: string, options: { demo?: boolean; page?: string } = {})
     ${demoBanner}
     <header class="site-header">
       <div class="header-inner">
-        <a href="/" data-route class="wordmark" aria-label="Flex Meal Templates home"><span aria-hidden="true">FMT</span><span class="wordmark-long" aria-hidden="true">Flex Meal Templates</span></a>
+        <a href="/" data-route class="wordmark" aria-label="Flex Meal Templates home"><span class="wordmark-short" aria-hidden="true">Flex Meals</span><span class="wordmark-long" aria-hidden="true">Flex Meal Templates</span></a>
         <nav aria-label="Main navigation">
           ${link('/app', 'My meals')}
           ${link('/demo', 'Demo')}
@@ -64,9 +64,9 @@ function shell(content: string, options: { demo?: boolean; page?: string } = {})
     <div class="route-announcer" aria-live="polite" aria-atomic="true"></div>
     ${content}
     <footer class="site-footer">
-      <p>Adjust recurring meals without making copies.</p>
+      <p>Adjust portions without copying meal templates.</p>
       <nav aria-label="Footer navigation">${link('/privacy', 'Privacy')} ${link('/terms', 'Terms')} <a href="https://sociobot.in" rel="external">Built by Param Factory <span class="sr-only">(external site)</span></a></nav>
-      <p>Version 1.0.2</p>
+      <p>Version 1.0.3</p>
     </footer>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>`;
 }
@@ -76,14 +76,14 @@ function landingPage(): string {
     <main id="main">
       <section class="hero broadsheet-grid" aria-labelledby="page-title">
         <div class="hero-copy">
-          <h1 id="page-title" tabindex="-1">Adjust saved meals as you log</h1>
-          <p class="dek">For people who repeat meals but change portions to match each meal’s nutrition budget.</p>
+          <h1 id="page-title" tabindex="-1">Adjust portions without changing meal templates</h1>
+          <p class="dek">For people who repeat meals and want each portion checked against their nutrition ranges.</p>
           <div class="hero-action">
             ${link('/?demo=1', 'Try it with sample data', 'button primary')}
-            <span>Open two sample meals. Nothing enters your records.</span>
+            <span>Open two sample meal templates. Nothing enters your records.</span>
           </div>
           <div class="secondary-start">
-            ${link('/app/new', 'Create your first template', 'button secondary')}
+            ${link('/app/new', 'Create your first meal template', 'button secondary')}
           </div>
           <ul class="plain-facts" aria-label="Product facts">
             <li>Works offline after the first visit.</li>
@@ -96,14 +96,14 @@ function landingPage(): string {
             <source type="image/webp" srcset="/assets/meal-edition-768.webp 768w, /assets/meal-edition.webp 1200w" sizes="(max-width: 760px) 100vw, 48vw" />
             <img src="/assets/meal-edition.webp" width="1200" height="800" alt="A kitchen scale and ingredient slips arranged like a newspaper layout." decoding="async" fetchpriority="high" />
           </picture>
-          <figcaption>One base meal. Today’s portions stay editable.</figcaption>
+          <figcaption>One meal template. Today’s portion stays editable.</figcaption>
         </figure>
       </section>
 
       <section class="preview-section" aria-labelledby="preview-title">
         <h2 id="preview-title">Meal preview</h2>
         <div class="preview-sheet">
-          <div><p class="label">Saved meal</p><h3>Weekday overnight oats</h3><p>60 g oats · 170 g yogurt · 100 g banana</p></div>
+          <div><p class="label">Meal template</p><h3>Weekday overnight oats</h3><p>60 g oats · 170 g yogurt · 100 g banana</p></div>
           <div class="preview-arrow" aria-hidden="true">→</div>
           <div><p class="label">Today · 0.75×</p><h3>Smaller early breakfast</h3><p><del>60 g</del> <ins>45 g oats</ins> · totals update before saving</p></div>
         </div>
@@ -112,9 +112,9 @@ function landingPage(): string {
       <section class="how-section" aria-labelledby="how-title">
         <h2 id="how-title">How it works</h2>
         <ol class="steps">
-          <li><span>01</span><h3>Save the base meal</h3><p>Enter each ingredient and its estimated nutrition.</p></li>
-          <li><span>02</span><h3>Set the meal’s bands</h3><p>Choose calorie and macro ranges for this meal.</p></li>
-          <li><span>03</span><h3>Adjust and log</h3><p>Change the serving or a single ingredient. Then export the record.</p></li>
+          <li><span>01</span><h3>Save the meal template</h3><p>Enter each ingredient and its estimated nutrition.</p></li>
+          <li><span>02</span><h3>Set the nutrition ranges</h3><p>Choose calorie and macro minimums and maximums for this meal.</p></li>
+          <li><span>03</span><h3>Adjust and log</h3><p>Change the portion or a single ingredient. Then export the record.</p></li>
         </ol>
       </section>
 
@@ -122,7 +122,7 @@ function landingPage(): string {
         <h2 id="limits-title">Limits and privacy</h2>
         <div class="columns">
           <p>You enter the nutrition estimates for each ingredient.</p>
-          <p>Your templates and logs use browser storage. Export JSON backups or erase this browser’s records.</p>
+          <p>Your meal templates and logs stay in this browser. Export JSON backups or erase this browser’s records.</p>
         </div>
       </section>
     </main>`);
@@ -144,13 +144,13 @@ function libraryMarkup(activeId?: string): string {
   if (!store) return '';
   if (store.data.templates.length === 0) return `
     <section class="empty-state" aria-labelledby="empty-title">
-      <p class="kicker">No saved meals</p>
+      <p class="kicker">No meal templates</p>
       <h2 id="empty-title">Build the meal you repeat</h2>
-      <p>Templates will appear here after you save one.</p>
-      ${link('/app/new', 'Create your first template', 'button primary')}
+      <p>Meal templates appear here after you save one.</p>
+      ${link('/app/new', 'Create your first meal template', 'button primary')}
     </section>`;
   return `<section class="meal-library" aria-labelledby="library-title">
-    <div class="library-heading"><h2 id="library-title">Saved meals</h2>${link(`${pathBase()}/new`, 'New template', 'button compact')}</div>
+    <div class="library-heading"><h2 id="library-title">Meal templates</h2>${link(`${pathBase()}/new`, 'New meal template', 'button compact')}</div>
     <ul>${store.data.templates.map((template) => {
       const totals = templateTotals(template);
       return `<li>${link(`${pathBase()}?meal=${encodeURIComponent(template.id)}`, `<span><strong>${escapeHtml(template.name)}</strong><small>${escapeHtml(template.meal)} · ${Math.round(totals.calories)} kcal base</small></span><span aria-hidden="true">→</span>`, template.id === activeId ? 'active' : '')}</li>`;
@@ -159,14 +159,14 @@ function libraryMarkup(activeId?: string): string {
 }
 
 function bandTable(template: MealTemplate, totals: Nutrients): string {
-  return `<div class="nutrition-table" aria-live="polite" aria-label="Nutrition compared with meal bands">
+  return `<div class="nutrition-table" aria-live="polite" aria-label="Nutrition compared with meal ranges">
     ${nutrientKeys.map((key) => {
       const state = bandState(totals[key], template.bands[key]);
       return `<div class="nutrition-row" data-nutrient="${key}">
         <span class="label">${nutrientLabel(key)}</span>
         <strong><span data-total>${Math.round(totals[key])}</span> <small>${nutrientUnit(key)}</small></strong>
         <span>${template.bands[key].min}–${template.bands[key].max} ${nutrientUnit(key)}</span>
-        <span class="band-state ${state}" data-state>${state === 'within' ? 'Within band' : `${state} band`}</span>
+        <span class="band-state ${state}" data-state>${state === 'within' ? 'Within range' : `${state} range`}</span>
       </div>`;
     }).join('')}
   </div>`;
@@ -177,13 +177,13 @@ function logWorkspace(template: MealTemplate): string {
   return `<section class="log-workspace edition-enter" aria-labelledby="meal-title">
     <div class="meal-heading">
       <div><p class="kicker">${escapeHtml(template.meal)} template</p><h2 id="meal-title">${escapeHtml(template.name)}</h2><p>${escapeHtml(template.note)}</p></div>
-      <div class="heading-actions">${link(`${pathBase()}/edit?id=${encodeURIComponent(template.id)}`, 'Edit template', 'button secondary compact')}<button type="button" class="button danger compact" data-action="delete-template" data-id="${escapeHtml(template.id)}">Delete</button></div>
+      <div class="heading-actions">${link(`${pathBase()}/edit?id=${encodeURIComponent(template.id)}`, 'Edit meal template', 'button secondary compact')}<button type="button" class="button danger compact" data-action="delete-template" data-id="${escapeHtml(template.id)}">Delete</button></div>
     </div>
     <form id="log-form" data-template-id="${escapeHtml(template.id)}">
       <div class="portion-control">
-        <label for="multiplier"><span>Serving multiplier</span><strong data-multiplier-label>1.00×</strong></label>
+        <label for="multiplier"><span>Portion multiplier</span><strong data-multiplier-label>1.00×</strong></label>
         <input id="multiplier" name="multiplier" type="range" min="0.25" max="3" step="0.05" value="1" />
-        <input class="number-input" id="multiplier-number" aria-label="Serving multiplier as a number" type="number" min="0.25" max="3" step="0.05" value="1" />
+        <input class="number-input" id="multiplier-number" aria-label="Portion multiplier as a number" type="number" min="0.25" max="3" step="0.05" value="1" />
       </div>
       <fieldset class="log-ingredients"><legend>Today’s ingredients</legend>
         ${template.ingredients.map((ingredient) => `<div class="log-ingredient" data-ingredient-id="${escapeHtml(ingredient.id)}">
@@ -192,14 +192,14 @@ function logWorkspace(template: MealTemplate): string {
           <p class="delta" data-role="delta">Base amount</p>
         </div>`).join('')}
       </fieldset>
-      <section class="budget-section" aria-labelledby="budget-title"><h3 id="budget-title">Today’s nutrition against this meal’s bands</h3>${bandTable(template, totals)}</section>
-      <div class="form-actions"><button class="button primary" type="submit">Log adjusted meal</button><span>Saving creates a dated record. The template stays unchanged.</span></div>
+      <section class="range-section" aria-labelledby="range-title"><h3 id="range-title">Today’s nutrition against this meal’s ranges</h3>${bandTable(template, totals)}</section>
+      <div class="form-actions"><button class="button primary" type="submit">Log adjusted meal</button><span>Saving creates a dated record. The meal template stays unchanged.</span></div>
     </form>
   </section>`;
 }
 
 function recentLogsMarkup(): string {
-  if (!store || store.data.logs.length === 0) return `<section class="recent-logs" aria-labelledby="logs-title"><h2 id="logs-title">Recent logs</h2><p>No meals logged yet. Adjust a saved meal to make the first record.</p></section>`;
+  if (!store || store.data.logs.length === 0) return `<section class="recent-logs" aria-labelledby="logs-title"><h2 id="logs-title">Recent logs</h2><p>No meals logged yet. Adjust a meal template’s portion to make the first record.</p></section>`;
   return `<section class="recent-logs" aria-labelledby="logs-title"><div class="library-heading"><h2 id="logs-title">Recent logs</h2><button class="button compact" data-action="export-csv" type="button">Export CSV</button></div><div class="log-table" role="table" aria-label="Recent meal logs">
     <div role="row" class="log-row log-header"><span role="columnheader">When</span><span role="columnheader">Meal</span><span role="columnheader">Portion</span><span role="columnheader">Calories</span></div>
     ${[...store.data.logs].sort((a, b) => b.loggedAt.localeCompare(a.loggedAt)).slice(0, 10).map((log) => `<div role="row" class="log-row"><span role="cell">${new Date(log.loggedAt).toLocaleDateString()}</span><span role="cell">${escapeHtml(log.templateName)}</span><span role="cell">${round(log.multiplier, 2)}×</span><span role="cell">${Math.round(log.totals.calories)} kcal</span></div>`).join('')}
@@ -240,7 +240,7 @@ async function appPage(): Promise<string> {
   const params = new URLSearchParams(location.search);
   const active = store.data.templates.find((item) => item.id === params.get('meal')) ?? store.data.templates[0];
   return shell(`<main id="main" class="app-page">
-    <header class="app-intro"><p class="kicker">${demo ? 'Sample meals' : 'Your saved meals'}</p><h1 tabindex="-1">Adjust a meal for today</h1><p>Pick a saved meal, change its portion, and compare it with the meal’s bands.</p><p id="offline-note" class="offline-note" hidden>You are offline. Saved meals and logging still work.</p></header>
+    <header class="app-intro"><p class="kicker">${demo ? 'Sample meal templates' : 'Your meal templates'}</p><h1 tabindex="-1">Adjust a meal for today</h1><p>Pick a meal template, change its portion, and compare it with the nutrition ranges.</p><p id="offline-note" class="offline-note" hidden>You are offline. Meal templates and logging still work.</p></header>
     <div class="app-grid">${libraryMarkup(active?.id)}${active ? logWorkspace(active) : ''}</div>
     ${recentLogsMarkup()}
     ${dataControlsMarkup()}
@@ -264,11 +264,11 @@ function templateForm(template?: MealTemplate): string {
   const bands = template?.bands ?? defaultBands();
   editorIngredientCount = template?.ingredients.length ?? 2;
   const ingredients = template?.ingredients.length ? template.ingredients.map((item, index) => ingredientEditor(item, index)).join('') : ingredientEditor(undefined, 0) + ingredientEditor(undefined, 1);
-  return shell(`<main id="main" class="form-page"><header><p class="kicker">${template ? 'Saved meal' : 'New meal'}</p><h1 tabindex="-1">${template ? 'Edit this meal template' : 'Create a reusable meal'}</h1><p>Enter nutrition for each base amount. You can change portions when you log.</p></header>
+  return shell(`<main id="main" class="form-page"><header><p class="kicker">${template ? 'Meal template' : 'New meal template'}</p><h1 tabindex="-1">${template ? 'Edit this meal template' : 'Create a meal template'}</h1><p>Enter nutrition for each base amount. You can change portions when you log.</p></header>
     <form id="template-form" data-template-id="${escapeHtml(template?.id ?? '')}">
-      <section aria-labelledby="meal-details"><h2 id="meal-details">Meal details</h2><div class="field-grid two">${input('name', 'Template name', template?.name ?? '', 'required maxlength="70"')}${input('meal', 'Meal label', template?.meal ?? '', 'required maxlength="30"')}</div><label><span>Short note</span><textarea name="note" maxlength="160">${escapeHtml(template?.note ?? '')}</textarea></label></section>
+      <section aria-labelledby="meal-details"><h2 id="meal-details">Meal details</h2><div class="field-grid two">${input('name', 'Meal template name', template?.name ?? '', 'required maxlength="70"')}${input('meal', 'Meal label', template?.meal ?? '', 'required maxlength="30"')}</div><label><span>Short note</span><textarea name="note" maxlength="160">${escapeHtml(template?.note ?? '')}</textarea></label></section>
       <section aria-labelledby="ingredients-title"><div class="library-heading"><h2 id="ingredients-title">Base ingredients</h2><button type="button" class="button compact" data-action="add-ingredient">Add ingredient</button></div><p>Nutrition values apply to the base amount shown.</p><div id="ingredient-editors">${ingredients}</div></section>
-      <section aria-labelledby="bands-title"><h2 id="bands-title">Nutrition bands for this meal</h2><p>Enter the lowest and highest value you want to see.</p><div class="band-fields">${nutrientKeys.map((key) => `<fieldset><legend>${nutrientLabel(key)} (${nutrientUnit(key)})</legend>${input(`${key}-min`, 'Minimum', bands[key].min, 'type="number" min="0" step="0.1" required')}${input(`${key}-max`, 'Maximum', bands[key].max, 'type="number" min="0" step="0.1" required')}</fieldset>`).join('')}</div></section>
+      <section aria-labelledby="ranges-title"><h2 id="ranges-title">Nutrition ranges for this meal</h2><p>Enter the lowest and highest value you want to see.</p><div class="band-fields">${nutrientKeys.map((key) => `<fieldset><legend>${nutrientLabel(key)} (${nutrientUnit(key)})</legend>${input(`${key}-min`, 'Minimum', bands[key].min, 'type="number" min="0" step="0.1" required')}${input(`${key}-max`, 'Maximum', bands[key].max, 'type="number" min="0" step="0.1" required')}</fieldset>`).join('')}</div></section>
       <div id="form-error" class="form-error" role="alert"></div><div class="form-actions"><button class="button primary" type="submit">Save meal template</button>${link(pathBase(), 'Cancel', 'button secondary')}</div>
     </form>
   </main>`, { demo: isDemo() });
@@ -277,7 +277,7 @@ function templateForm(template?: MealTemplate): string {
 function legalPage(kind: 'privacy' | 'terms'): string {
   const privacy = kind === 'privacy';
   return shell(`<main id="main" class="legal-page"><p class="kicker">Effective 28 August 2026</p><h1 tabindex="-1">${privacy ? 'Privacy' : 'Terms'}</h1>
-    ${privacy ? `<h2>Your records stay local</h2><p>Meal templates, logs, and settings are stored in this browser with IndexedDB. The app has no account and sends no nutrition records to us.</p><h2>Demo records stay separate</h2><p>The demo uses a separate browser database. Resetting or leaving the demo does not change your real records.</p><h2>Network requests</h2><p>The installed app requests its own files and service worker. It loads no third-party scripts, fonts, or trackers.</p><h2>Your controls</h2><p>Export JSON for a full backup. Export CSV for meal logs. “Erase all records” permanently removes this browser’s templates and logs.</p>` : `<h2>Use as a personal utility</h2><p>Flex Meal Templates is free software for recording user-entered meal estimates. It is not medical or dietary advice.</p><h2>Check your estimates</h2><p>You are responsible for the ingredient and nutrition values you enter. Values may differ from labels or actual portions.</p><h2>No warranty</h2><p>The software is provided under the MIT License without warranty. Keep a JSON backup if the records matter to you.</p><h2>Acceptable use</h2><p>Do not use the site to break laws, harm others, or interfere with its operation.</p>`}
+    ${privacy ? `<h2>Your records stay local</h2><p>Meal templates, logs, and settings are stored in this browser with IndexedDB. The app has no account and sends no nutrition records to us.</p><h2>Demo records stay separate</h2><p>The demo uses a separate browser database. Resetting or leaving the demo does not change your real records.</p><h2>Network requests</h2><p>The installed app requests its own files and service worker. It loads no third-party scripts, fonts, or trackers.</p><h2>Your controls</h2><p>Export JSON for a full backup. Export CSV for meal logs. “Erase all records” permanently removes this browser’s meal templates and logs.</p>` : `<h2>Use as a personal utility</h2><p>Flex Meal Templates is free software for recording user-entered meal estimates. It is not medical or dietary advice.</p><h2>Check your estimates</h2><p>You are responsible for the ingredient and nutrition values you enter. Values may differ from labels or actual portions.</p><h2>No warranty</h2><p>The software is provided under the MIT License without warranty. Keep a JSON backup if the records matter to you.</p><h2>Acceptable use</h2><p>Do not use the site to break laws, harm others, or interfere with its operation.</p>`}
     <p>${link('/', 'Return home')}</p></main>`);
 }
 
@@ -289,6 +289,7 @@ async function render(push = false): Promise<void> {
   const path = location.pathname.replace(/\/$/, '') || '/';
   const demoEntry = path === '/' && new URLSearchParams(location.search).get('demo') === '1';
   if (push) scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  let renderedNotFound = false;
   if (demoEntry) app.innerHTML = await appPage();
   else if (path === '/') app.innerHTML = landingPage();
   else if (path === '/privacy') app.innerHTML = legalPage('privacy');
@@ -301,14 +302,15 @@ async function render(push = false): Promise<void> {
     if (store.needsRecovery) app.innerHTML = recoveryPage(demo);
     else {
       const template = store.data.templates.find((item) => item.id === new URLSearchParams(location.search).get('id'));
-      app.innerHTML = template ? templateForm(template) : notFoundPage();
+      if (template) app.innerHTML = templateForm(template);
+      else { renderedNotFound = true; app.innerHTML = notFoundPage(); }
     }
-  } else app.innerHTML = notFoundPage();
-  const metaKey = demoEntry ? '/demo' : (routeMeta[path] ? path : '/404');
+  } else { renderedNotFound = true; app.innerHTML = notFoundPage(); }
+  const metaKey = renderedNotFound ? '/404' : demoEntry ? '/demo' : (routeMeta[path] ? path : '/404');
   const meta = routeMeta[metaKey];
   document.title = meta.title;
   const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-  if (canonical) canonical.href = `https://flex-meal-templates.sociobot.in${demoEntry ? '/demo' : path}`;
+  if (canonical) canonical.href = `https://flex-meal-templates.sociobot.in${renderedNotFound ? '/404' : demoEntry ? '/demo' : path}`;
   document.querySelectorAll<HTMLMetaElement>('meta[name="description"], meta[property="og:description"], meta[name="twitter:description"]').forEach((element) => { element.content = meta.description; });
   document.querySelectorAll<HTMLMetaElement>('meta[property="og:title"], meta[name="twitter:title"]').forEach((element) => { element.content = meta.title; });
   const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
@@ -395,7 +397,7 @@ function updateLogCalculation(template: MealTemplate, resetAmounts: boolean): vo
     const total = row?.querySelector<HTMLElement>('[data-total]');
     const stateLabel = row?.querySelector<HTMLElement>('[data-state]');
     if (total) total.textContent = String(Math.round(result.totals[key]));
-    if (stateLabel) { stateLabel.className = `band-state ${state}`; stateLabel.textContent = state === 'within' ? 'Within band' : `${state} band`; }
+    if (stateLabel) { stateLabel.className = `band-state ${state}`; stateLabel.textContent = state === 'within' ? 'Within range' : `${state} range`; }
   }
 }
 
@@ -463,7 +465,7 @@ function csvCell(value: unknown): string {
 
 function exportCsv(): void {
   if (!store) return;
-  const header = ['logged_at', 'template', 'serving_multiplier', 'calories_kcal', 'protein_g', 'carbs_g', 'fat_g', 'ingredients'];
+  const header = ['logged_at', 'template', 'portion_multiplier', 'calories_kcal', 'protein_g', 'carbs_g', 'fat_g', 'ingredients'];
   const rows = store.data.logs.map((log) => [log.loggedAt, log.templateName, log.multiplier, round(log.totals.calories), round(log.totals.protein), round(log.totals.carbs), round(log.totals.fat), log.ingredients.map((item) => `${round(item.amount)} ${item.unit} ${item.name}`).join('; ')]);
   download('flex-meal-logs.csv', 'text/csv;charset=utf-8', [header, ...rows].map((row) => row.map(csvCell).join(',')).join('\n'));
 }

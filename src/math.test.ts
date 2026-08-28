@@ -12,7 +12,7 @@ describe('meal calculations', () => {
     expect(addNutrients([{ calories: 100, protein: 2, carbs: 3, fat: 4 }, { calories: 50, protein: 1, carbs: 2, fat: 3 }])).toEqual({ calories: 150, protein: 3, carbs: 5, fat: 7 });
   });
 
-  it('describes both edges as within the band', () => {
+  it('describes both edges as within the range', () => {
     expect(bandState(400, { min: 400, max: 500 })).toBe('within');
     expect(bandState(501, { min: 400, max: 500 })).toBe('above');
   });

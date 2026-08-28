@@ -41,7 +41,7 @@ No fonts are loaded from a third party. The two system stacks keep the first loa
 
 ## Motion
 
-The signature transition is an **edition change**: a new sheet rises 8px and settles over 180ms when a template opens. Buttons compress by 1px on press. No motion loops. Under `prefers-reduced-motion: reduce`, movement is removed and state changes are instant.
+The signature transition is an **edition change**: a new sheet rises 8px and settles over 180ms when a template opens. Text stays fully opaque so contrast does not dip during the movement. Buttons compress by 1px on press. No motion loops. Under `prefers-reduced-motion: reduce`, movement is removed and state changes are instant.
 
 ## Original asset plan
 

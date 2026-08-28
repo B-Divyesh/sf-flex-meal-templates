@@ -16,7 +16,7 @@ describe('backup validation', () => {
   it.each([
     ['missing ingredient substitutions', (backup: any) => { delete backup.templates[0].ingredients[0].substitutions; }],
     ['incomplete nutrition', (backup: any) => { delete backup.templates[0].ingredients[0].nutrients.fat; }],
-    ['inverted nutrition band', (backup: any) => { backup.templates[0].bands.calories = { min: 600, max: 400 }; }],
+    ['inverted nutrition range', (backup: any) => { backup.templates[0].bands.calories = { min: 600, max: 400 }; }],
     ['invalid template date', (backup: any) => { backup.templates[0].createdAt = 'not-a-date'; }],
     ['missing log totals', (backup: any) => { delete backup.logs[0].totals; }],
     ['invalid log ingredients', (backup: any) => { backup.logs[0].ingredients = [{}]; }],

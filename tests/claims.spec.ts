@@ -4,12 +4,12 @@ import { AxeBuilder } from '@axe-core/playwright';
 test('@claim:portion-adjust updates totals and keeps the base template', async ({ page }) => {
   await page.goto('/demo');
   await expect(page.getByRole('heading', { name: 'Adjust a meal for today' })).toBeVisible();
-  await page.getByLabel('Serving multiplier as a number').fill('0.75');
+  await page.getByLabel('Portion multiplier as a number').fill('0.75');
   await expect(page.locator('[data-nutrient="calories"] [data-total]')).toHaveText('386');
-  await expect(page.locator('[data-nutrient="calories"] [data-state]')).toHaveText('below band');
+  await expect(page.locator('[data-nutrient="calories"] [data-state]')).toHaveText('below range');
   await page.getByRole('button', { name: 'Log adjusted meal' }).click();
   await expect(page.getByRole('status')).toContainText('Adjusted meal logged');
-  await page.getByRole('link', { name: 'Edit template' }).click();
+  await page.getByRole('link', { name: 'Edit meal template' }).click();
   await expect(page.locator('[name="ingredient-amount"]').first()).toHaveValue('60');
 });
 
@@ -28,7 +28,7 @@ test('@claim:offline-reload reloads the demo without a network', async ({ page, 
   await context.setOffline(true);
   await page.reload();
   await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('You are offline. Saved meals and logging still work.')).toBeVisible();
+  await expect(page.getByText('You are offline. Meal templates and logging still work.')).toBeVisible();
 
   await context.setOffline(false);
   await page.getByRole('link', { name: 'Start for real' }).click();
@@ -43,7 +43,7 @@ test('@claim:local-only sends no records away', async ({ page }) => {
     if (new URL(request.url()).origin !== 'http://127.0.0.1:4173') external.push(request.url());
   });
   await page.goto('/demo');
-  await page.getByLabel('Serving multiplier as a number').fill('1.1');
+  await page.getByLabel('Portion multiplier as a number').fill('1.1');
   await page.getByRole('button', { name: 'Log adjusted meal' }).click();
   expect(external).toEqual([]);
 });
@@ -54,7 +54,7 @@ test('@claim:csv-json-export downloads complete usable files', async ({ page }) 
   await page.getByRole('button', { name: 'Export CSV' }).click();
   const csv = await (await csvDownload).createReadStream();
   const csvText = await streamText(csv);
-  expect(csvText).toContain('"logged_at","template","serving_multiplier","calories_kcal"');
+  expect(csvText).toContain('"logged_at","template","portion_multiplier","calories_kcal"');
   expect(csvText.trim().split('\n')).toHaveLength(2);
 
   const jsonDownload = page.waitForEvent('download');
@@ -74,8 +74,8 @@ test('@claim:demo-isolation keeps demo and real databases separate', async ({ pa
   await expect(page.getByRole('row')).toHaveCount(2);
 
   await page.getByRole('link', { name: 'Flex Meal Templates home' }).click();
-  await page.getByRole('link', { name: 'Create your first template' }).click();
-  await page.getByLabel('Template name').fill('Real weekday toast');
+  await page.getByRole('link', { name: 'Create your first meal template' }).click();
+  await page.getByLabel('Meal template name').fill('Real weekday toast');
   await page.getByLabel('Meal label').fill('Breakfast');
   const ingredients = page.locator('.ingredient-editor');
   await ingredients.nth(0).getByLabel('Ingredient name').fill('Toast');
@@ -114,7 +114,7 @@ test('@claim:erase-confirmation asks before clearing only the active workspace',
   await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
 
   await page.goto('/app/new');
-  await page.getByLabel('Template name').fill('Real meal survives demo erase');
+  await page.getByLabel('Meal template name').fill('Real meal survives demo erase');
   await page.getByLabel('Meal label').fill('Breakfast');
   const ingredients = page.locator('.ingredient-editor');
   await ingredients.nth(0).getByLabel('Ingredient name').fill('Toast');
@@ -142,7 +142,7 @@ test('@claim:validated-json-import rejects malformed backups without changing re
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
   await page.goto('/app/new');
-  await page.getByLabel('Template name').fill('Keep this breakfast');
+  await page.getByLabel('Meal template name').fill('Keep this breakfast');
   await page.getByLabel('Meal label').fill('Breakfast');
   const ingredients = page.locator('.ingredient-editor');
   await ingredients.nth(0).getByLabel('Ingredient name').fill('Porridge');
@@ -167,6 +167,83 @@ test('@claim:validated-json-import rejects malformed backups without changing re
   expect(pageErrors).toEqual([]);
 });
 
+test('@claim:template-authoring saves custom nutrition ranges and uses them in a log', async ({ page }) => {
+  await page.goto('/?demo=1');
+  await page.getByRole('link', { name: 'Start for real' }).click();
+  await page.getByRole('link', { name: 'Create your first meal template' }).click();
+
+  await page.getByLabel('Meal template name').fill('Custom range breakfast');
+  await page.getByLabel('Meal label').fill('Breakfast');
+  const ingredients = page.locator('.ingredient-editor');
+  await ingredients.nth(0).getByLabel('Ingredient name').fill('Oats');
+  await ingredients.nth(0).getByLabel('Base amount').fill('50');
+  await ingredients.nth(0).locator('[name="ingredient-calories"]').fill('180');
+  await ingredients.nth(0).locator('[name="ingredient-protein"]').fill('6');
+  await ingredients.nth(0).locator('[name="ingredient-carbs"]').fill('30');
+  await ingredients.nth(0).locator('[name="ingredient-fat"]').fill('3');
+  await ingredients.nth(1).getByLabel('Ingredient name').fill('Yogurt');
+  await ingredients.nth(1).getByLabel('Base amount').fill('100');
+  await ingredients.nth(1).locator('[name="ingredient-calories"]').fill('80');
+  await ingredients.nth(1).locator('[name="ingredient-protein"]').fill('10');
+  await ingredients.nth(1).locator('[name="ingredient-carbs"]').fill('8');
+  await ingredients.nth(1).locator('[name="ingredient-fat"]').fill('1');
+
+  const ranges = {
+    calories: ['250', '270'],
+    protein: ['15', '17'],
+    carbs: ['35', '40'],
+    fat: ['3', '5']
+  } as const;
+  for (const [nutrient, [minimum, maximum]] of Object.entries(ranges)) {
+    await page.locator(`[name="${nutrient}-min"]`).fill(minimum);
+    await page.locator(`[name="${nutrient}-max"]`).fill(maximum);
+  }
+  await page.getByRole('button', { name: 'Save meal template' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Custom range breakfast' })).toBeVisible();
+  await expect(page.locator('[data-nutrient="calories"]')).toContainText('250–270 kcal');
+  await expect(page.locator('[data-nutrient="protein"]')).toContainText('15–17 g');
+  await expect(page.locator('.band-state')).toHaveText(['Within range', 'Within range', 'Within range', 'Within range']);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Custom range breakfast' })).toBeVisible();
+  await expect(page.locator('[data-nutrient="carbs"]')).toContainText('35–40 g');
+  await expect(page.locator('[data-nutrient="fat"]')).toContainText('3–5 g');
+  await page.getByRole('button', { name: 'Log adjusted meal' }).click();
+
+  const state = await readDatabaseState(page, 'flex-meals-real') as {
+    templates: Array<{ name: string; bands: typeof ranges }>;
+    logs: Array<{ templateName: string; totals: { calories: number; protein: number; carbs: number; fat: number } }>;
+  };
+  expect(state.templates[0].name).toBe('Custom range breakfast');
+  expect(state.templates[0].bands).toEqual({
+    calories: { min: 250, max: 270 }, protein: { min: 15, max: 17 }, carbs: { min: 35, max: 40 }, fat: { min: 3, max: 5 }
+  });
+  expect(state.logs[0]).toMatchObject({ templateName: 'Custom range breakfast', totals: { calories: 260, protein: 16, carbs: 38, fat: 4 } });
+});
+
+test('@claim:json-roundtrip restores every exported meal template and log', async ({ page }) => {
+  await page.goto('/demo');
+  const downloadEvent = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export JSON backup' }).click();
+  const exportedText = await streamText(await (await downloadEvent).createReadStream());
+  const exported = JSON.parse(exportedText) as unknown;
+
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Erase all records' }).click();
+  await expect(page.getByRole('heading', { name: 'Build the meal you repeat' })).toBeVisible();
+  await page.locator('#import-file').setInputFiles({
+    name: 'flex-meal-templates-backup.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(exportedText)
+  });
+
+  await expect(page.getByRole('status')).toHaveText('Backup imported.');
+  expect(await readDatabaseState(page, 'flex-meals-demo')).toEqual(exported);
+  await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('Lentil desk lunch', { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole('row')).toHaveCount(2);
+});
+
 test('landing and demo have no serious accessibility violations', async ({ page }) => {
   for (const path of ['/', '/demo', '/privacy']) {
     await page.goto(path);
@@ -177,9 +254,9 @@ test('landing and demo have no serious accessibility violations', async ({ page 
 
 test('routes update title, descriptions, and social descriptions', async ({ page }) => {
   const expected = [
-    ['/app', 'Your meals — Flex Meal Templates', 'Save meal templates, adjust today’s portions, and compare nutrition with each meal’s bands.'],
-    ['/app/new', 'New meal — Flex Meal Templates', 'Create a reusable meal template with ingredients and nutrition bands.'],
-    ['/demo', 'Demo — Flex Meal Templates', 'Try two sample meals and one saved log without changing your personal records.'],
+    ['/app', 'Your meals — Flex Meal Templates', 'Save meal templates, adjust today’s portions, and compare nutrition with each meal’s ranges.'],
+    ['/app/new', 'New meal — Flex Meal Templates', 'Create a meal template with ingredients and custom nutrition ranges.'],
+    ['/demo', 'Demo — Flex Meal Templates', 'Try two sample meal templates and one earlier log without changing your records.'],
     ['/privacy', 'Privacy — Flex Meal Templates', 'Read how Flex Meal Templates stores meal records in your browser and keeps demo data separate.'],
     ['/terms', 'Terms — Flex Meal Templates', 'Read the terms for using Flex Meal Templates as a personal meal-recording utility.'],
     ['/missing-page', 'Page not found — Flex Meal Templates', 'This Flex Meal Templates page could not be found.']
@@ -196,9 +273,20 @@ test('routes update title, descriptions, and social descriptions', async ({ page
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://flex-meal-templates.sociobot.in/demo');
 });
 
+test('invalid real and demo edit IDs use missing-page metadata', async ({ page }) => {
+  for (const path of ['/app/edit?id=missing', '/demo/edit?id=missing']) {
+    await page.goto(path);
+    await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+    await expect(page).toHaveTitle('Page not found — Flex Meal Templates');
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', 'This Flex Meal Templates page could not be found.');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://flex-meal-templates.sociobot.in/404');
+  }
+});
+
 test('creates a real meal template with a substitute', async ({ page }) => {
   await page.goto('/app/new');
-  await page.getByLabel('Template name').fill('Fast toast plate');
+  await page.getByLabel('Meal template name').fill('Fast toast plate');
   await page.getByLabel('Meal label').fill('Breakfast');
   const ingredients = page.locator('.ingredient-editor');
   await ingredients.nth(0).getByLabel('Ingredient name').fill('Wholegrain toast');
@@ -218,13 +306,17 @@ async function streamText(stream: NodeJS.ReadableStream | null): Promise<string>
 }
 
 async function readRealState(page: import('@playwright/test').Page): Promise<unknown> {
-  return page.evaluate(() => new Promise((resolve, reject) => {
-    const open = indexedDB.open('flex-meals-real', 1);
+  return readDatabaseState(page, 'flex-meals-real');
+}
+
+async function readDatabaseState(page: import('@playwright/test').Page, databaseName: string): Promise<unknown> {
+  return page.evaluate((name) => new Promise((resolve, reject) => {
+    const open = indexedDB.open(name, 1);
     open.onerror = () => reject(open.error);
     open.onsuccess = () => {
       const request = open.result.transaction('app').objectStore('app').get('state');
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve(request.result as unknown);
     };
-  }));
+  }), databaseName);
 }
