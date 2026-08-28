@@ -1,4 +1,29 @@
-# Flex Meal Templates — repair handoff
+# Flex Meal Templates — verification handoff: **FAIL**
+
+## Independent verifier decision — 2026-08-28
+
+Candidate `efd2eb4b80936d90fe9df0f676ac1ca03000e319` at
+<https://flex-meal-templates.sociobot.in> **FAILS release verification**.
+See [.factory/verification.md](verification.md) for complete evidence.
+
+**Release-blocking critical defect:** importing the malformed JSON
+`{"version":1,"templates":[{}],"logs":[]}` passes the shallow import check,
+replaces real IndexedDB data, then makes `/app` blank after reload with
+`Cannot read properties of undefined (reading 'map')`. This is persistent data
+loss and does not recover in the product UI. Validate the entire backup before
+writing it, retain the current data on rejection, show a plain error, and add a
+reload regression test.
+
+Verification otherwise established that all six required claim tests pass,
+`npm test` exits 0 (3 unit + 10 E2E), the production build passes, and live
+hashed JS/CSS/service-worker assets exactly match this candidate. Live desktop,
+390px mobile, keyboard, reduced-motion, axe, privacy-request, PWA offline, and
+response-header checks passed. These passing checks do not offset the critical
+invalid-import failure.
+
+---
+
+# Previous repair handoff
 
 ## Repair scope
 
