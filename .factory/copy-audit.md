@@ -52,4 +52,4 @@ breath and name the first step.
 | Isolated sample mode | demo |
 
 Catalog description: “Adjust saved meal portions and compare each log with its
-nutrition bands.” It has 11 words, 72 characters, and starts with a verb.
+nutrition bands.” It has 12 words, 73 characters, and starts with a verb.

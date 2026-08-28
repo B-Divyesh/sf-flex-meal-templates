@@ -1,4 +1,43 @@
-# Flex Meal Templates — review handoff
+# Flex Meal Templates — polish round 1 handoff
+
+## Released repair — 2026-08-28
+
+Repair commit: `5493b2a85574648a36536d0b2e3ff5906cb267e7` (from review base
+`ae4c6e34975fa80f8b2ef055e492ac3feb0903c7`). Static deployment
+`6fa4ed5d-0bc9-4146-b320-56790b0c3644` completed successfully at
+<https://flex-meal-templates.sociobot.in>.
+
+All three adversarial-review findings are repaired and mapped in
+`.factory/polish-1.md`:
+
+- F-1-1: plain, context-bearing landing headings replaced decorative editorial labels.
+- F-1-2: the first action now opens `/?demo=1`; its isolated banner/reset flow is tested, and every retained product promise has a declared claim test.
+- F-1-3: route-specific title, description, Open Graph, Twitter, canonical, and robots metadata now update for app, demo, legal, and missing routes.
+
+### Exact verification
+
+- Fresh clone `/tmp/flex-meal-templates-clean-ZsUJZk`: `npm ci`; each of the 9 commands in `.factory/claims.json`; `npm test` (12 Vitest + 15 Playwright); `npm run build`; and `npm audit --audit-level=high` all passed.
+- Local final gate: `npm test` passed (12 unit + 15 browser tests); `npm run build` produced `dist/`; JavaScript gzip is 11.45 KB and CSS gzip is 4.01 KB.
+- Accessibility: Playwright axe found zero serious/critical violations. The live 390×844 cold check covered home, `/?demo=1`, `/demo`, `/app`, `/app/new`, `/privacy`, `/terms`, and a missing route: one `h1`, one `main`, no overflow, and no console/page errors.
+- Privacy: the live complete demo request log contained no cross-origin request. No analytics, third-party font, or third-party script is loaded.
+- Offline: after service-worker control, a live `/?demo=1` page reloaded offline with “Weekday overnight oats” and the visible offline notice.
+- Live identity: `dist/assets/index-ikc4gAYc.js` and the live file share SHA-256 `2ce9c373b2b17908b96e224d69b890ab70b0a28a4b09ad637eb95332b69bef0d`.
+- Screenshots: `.factory/evidence/polish-1/live-home-390.png`, `live-demo-query-390.png`, and `live-demo-offline.png`.
+
+### Run and verify
+
+```sh
+npm ci
+npm test
+npm run build
+npm run preview
+```
+
+Known gaps: none. Records intentionally remain local to one browser; export a JSON backup before clearing browser data.
+
+---
+
+# Previous review handoff
 
 ## Adversarial first-read review 1 — 2026-08-28
 
