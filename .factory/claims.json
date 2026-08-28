@@ -1,0 +1,44 @@
+[
+  {
+    "id": "portion-adjust",
+    "claim": "Adjust a saved meal's portion and compare it with that meal's nutrition bands without changing the template.",
+    "where": "landing headline, live preview, logging workspace",
+    "test": "npm run test:e2e -- --grep @claim:portion-adjust",
+    "sandbox": "fresh browser context at /demo; change the multiplier, assert totals and band state, log it, then confirm the base amount remains 60 g"
+  },
+  {
+    "id": "offline-reload",
+    "claim": "Works offline after the first visit.",
+    "where": "landing facts, README",
+    "test": "npm run test:e2e -- --grep @claim:offline-reload",
+    "sandbox": "fresh browser context at /demo; wait for its service worker, set the context offline, reload, and assert sample data"
+  },
+  {
+    "id": "local-only",
+    "claim": "Meal records stay in this browser.",
+    "where": "landing facts, privacy page, README",
+    "test": "npm run test:e2e -- --grep @claim:local-only",
+    "sandbox": "record every request during a complete demo log and assert all requests are same-origin"
+  },
+  {
+    "id": "csv-json-export",
+    "claim": "Exports meal logs as CSV and all records as JSON.",
+    "where": "landing facts, data controls, README",
+    "test": "npm run test:e2e -- --grep @claim:csv-json-export",
+    "sandbox": "demo data; download both formats and assert the CSV header and JSON templates and logs"
+  },
+  {
+    "id": "demo-isolation",
+    "claim": "Demo changes never enter real records, and Reset demo restores the sample.",
+    "where": "demo banner, privacy page",
+    "test": "npm run test:e2e -- --grep @claim:demo-isolation",
+    "sandbox": "fresh browser context; log in /demo, open /app and assert empty state, then reset the demo and assert its original log count"
+  },
+  {
+    "id": "free-product",
+    "claim": "The complete product is free to use.",
+    "where": "landing facts, README",
+    "test": "npm run test:e2e -- --grep @claim:free-product",
+    "sandbox": "fresh demo; assert the full log and export actions are available with no payment, purchase, or upgrade action"
+  }
+]
