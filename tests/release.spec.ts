@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 import { readFileSync } from 'node:fs';
+import { nonSitemapRoutePaths, routeMeta, stableRoutePaths } from '../src/routes';
 
 test('every declared claim has exactly one tagged browser test', () => {
   const claims = JSON.parse(readFileSync('.factory/claims.json', 'utf8')) as Array<{ id: string; test: string }>;
@@ -12,6 +13,20 @@ test('every declared claim has exactly one tagged browser test', () => {
   expect(new Set(taggedTests).size).toBe(taggedTests.length);
   expect(taggedTests.sort()).toEqual(declared.sort());
   for (const claim of claims) expect(claim.test).toContain(`@claim:${claim.id}`);
+});
+
+test('sitemap lists every stable route in the route metadata inventory', () => {
+  const sitemap = readFileSync('public/sitemap.xml', 'utf8');
+  const sitemapPaths = [...sitemap.matchAll(/<loc>https:\/\/flex-meal-templates\.sociobot\.in([^<]*)<\/loc>/g)]
+    .map((match) => match[1] || '/')
+    .sort();
+  const explicitlyExcluded = new Set<string>(nonSitemapRoutePaths);
+  const metadataPaths = Object.keys(routeMeta).filter((path) => !explicitlyExcluded.has(path)).sort();
+
+  expect(nonSitemapRoutePaths).toEqual(['/app/edit', '/demo/edit', '/404', '/offline']);
+  expect(stableRoutePaths.slice().sort()).toEqual(metadataPaths);
+  expect(sitemapPaths).toEqual(metadataPaths);
+  for (const path of nonSitemapRoutePaths) expect(sitemapPaths).not.toContain(path);
 });
 
 test('390px routes fit the viewport and keep their accessible structure', async ({ page }) => {
