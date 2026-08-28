@@ -15,6 +15,7 @@ test('@claim:portion-adjust updates totals and keeps the base template', async (
 
 test('@claim:offline-reload reloads the demo without a network', async ({ page, context }) => {
   await page.goto('/demo');
+  await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
     if (!navigator.serviceWorker.controller) await new Promise<void>((resolve) => navigator.serviceWorker.addEventListener('controllerchange', () => resolve(), { once: true }));
@@ -28,6 +29,12 @@ test('@claim:offline-reload reloads the demo without a network', async ({ page, 
   await page.reload();
   await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('You are offline. Saved meals and logging still work.')).toBeVisible();
+
+  await context.setOffline(false);
+  await page.getByRole('link', { name: 'Start for real' }).click();
+  await expect(page.getByRole('heading', { name: 'Build the meal you repeat' })).toBeVisible();
+  await page.goto('/demo');
+  await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
 });
 
 test('@claim:local-only sends no records away', async ({ page }) => {
@@ -65,6 +72,19 @@ test('@claim:demo-isolation keeps demo and real databases separate', async ({ pa
   await page.goto('/demo');
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await expect(page.getByRole('row')).toHaveCount(2);
+
+  await page.getByRole('link', { name: 'Flex Meal Templates home' }).click();
+  await page.getByRole('link', { name: 'Create your first template' }).click();
+  await page.getByLabel('Template name').fill('Real weekday toast');
+  await page.getByLabel('Meal label').fill('Breakfast');
+  const ingredients = page.locator('.ingredient-editor');
+  await ingredients.nth(0).getByLabel('Ingredient name').fill('Toast');
+  await ingredients.nth(1).getByLabel('Ingredient name').fill('Eggs');
+  await page.getByRole('button', { name: 'Save meal template' }).click();
+  await expect(page.getByRole('heading', { name: 'Real weekday toast' })).toBeVisible();
+  await page.goto('/demo');
+  await expect(page.getByText('Real weekday toast', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
 });
 
 test('@claim:free-product exposes the full flow without payment', async ({ page }) => {

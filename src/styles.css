@@ -150,6 +150,8 @@ input, select, textarea { border: var(--rule); border-radius: 0; background: var
 .field-grid.three { grid-template-columns: 2fr 1fr 1fr; }
 .field-grid.four { grid-template-columns: repeat(4, 1fr); }
 .field-grid label, .form-page > form > section > label, .band-fields label { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; font-weight: 800; }
+.field-grid > label, .band-fields > fieldset { min-width: 0; }
+.field-grid input, .band-fields input { width: 100%; min-width: 0; }
 textarea { width: 100%; min-height: 96px; resize: vertical; }
 .ingredient-editor { position: relative; margin: 24px 0; padding: 24px; border: var(--rule); background: rgba(255, 253, 247, 0.5); }
 .ingredient-editor legend { padding: 0 8px; font: 700 1.2rem var(--serif); }

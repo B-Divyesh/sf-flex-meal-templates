@@ -395,7 +395,8 @@ function controlNumber(row: Element, name: string): number {
 }
 
 async function saveTemplate(form: HTMLFormElement): Promise<void> {
-  if (!store) { store = new MealStore(isDemo()); await store.load(); }
+  const demo = isDemo();
+  if (!store || store.demo !== demo) { store = new MealStore(demo); await store.load(); }
   const error = document.querySelector<HTMLElement>('#form-error');
   const rows = [...form.querySelectorAll<HTMLElement>('.ingredient-editor')];
   if (rows.length === 0) { if (error) error.textContent = 'Add at least one ingredient before saving.'; return; }

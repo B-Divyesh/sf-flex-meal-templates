@@ -1,4 +1,4 @@
-const VERSION = 'flex-meals-v2';
+const VERSION = 'flex-meals-v3';
 const CORE = ['/', '/app', '/demo', '/privacy', '/terms', '/offline.html', '/manifest.webmanifest', '/icons/favicon.svg', '/assets/meal-edition.webp', '/assets/meal-edition-768.webp'];
 
 self.addEventListener('install', (event) => {
@@ -38,13 +38,17 @@ self.addEventListener('fetch', (event) => {
         await cache.put(event.request, response.clone());
         return response;
       } catch {
-        return (await caches.match(event.request)) || (await caches.match('/')) || (await caches.match('/offline.html'));
+        return (await caches.match(event.request, { ignoreVary: true })) || (await caches.match('/', { ignoreVary: true })) || (await caches.match('/offline.html', { ignoreVary: true }));
       }
     })());
     return;
   }
   event.respondWith((async () => {
-    const cached = await caches.match(event.request);
+    // A development or hosting server may add `Vary: Origin` to static files.
+    // The install request and a later page request can then have different
+    // Origin headers even though they address the same immutable asset. Match
+    // by URL so the precached app shell remains usable without a network.
+    const cached = await caches.match(event.request, { ignoreVary: true });
     if (cached) return cached;
     try {
       const response = await fetch(event.request);
