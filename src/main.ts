@@ -11,6 +11,59 @@ const app: HTMLDivElement = root;
 let store: MealStore | undefined;
 let editorIngredientCount = 0;
 const invalidBackupMessage = 'That file is not a valid backup. Choose a JSON backup exported by this app. Your records were not changed.';
+const scrollStateKey = 'flexMealsScroll';
+const scrollEntryKey = 'flexMealsEntry';
+
+type NavigationMode = 'initial' | 'push' | 'history';
+type ScrollPosition = { x: number; y: number };
+
+const scrollPositions = new Map<string, ScrollPosition>();
+
+function historyRecord(value: unknown): Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function scrollPositionFrom(value: unknown): ScrollPosition | undefined {
+  const state = historyRecord(value);
+  const position = historyRecord(state[scrollStateKey]);
+  return typeof position.x === 'number' && typeof position.y === 'number'
+    ? { x: position.x, y: position.y }
+    : undefined;
+}
+
+function entryIdFrom(value: unknown): string | undefined {
+  const id = historyRecord(value)[scrollEntryKey];
+  return typeof id === 'string' ? id : undefined;
+}
+
+function currentScrollPosition(): ScrollPosition {
+  return { x: window.scrollX, y: window.scrollY };
+}
+
+function stateWithScroll(value: unknown, entryId: string, position: ScrollPosition): Record<string, unknown> {
+  return { ...historyRecord(value), [scrollEntryKey]: entryId, [scrollStateKey]: position };
+}
+
+function saveCurrentScrollPosition(): void {
+  const entryId = entryIdFrom(history.state) ?? crypto.randomUUID();
+  const position = currentScrollPosition();
+  scrollPositions.set(entryId, position);
+  history.replaceState(stateWithScroll(history.state, entryId, position), '');
+}
+
+function setScrollPosition(position: ScrollPosition): void {
+  window.scrollTo({ left: position.x, top: position.y, behavior: 'instant' });
+}
+
+function afterLayout(): Promise<void> {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+}
+
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+const initialEntryId = entryIdFrom(history.state) ?? crypto.randomUUID();
+const initialScrollPosition = scrollPositionFrom(history.state) ?? currentScrollPosition();
+scrollPositions.set(initialEntryId, initialScrollPosition);
+history.replaceState(stateWithScroll(history.state, initialEntryId, initialScrollPosition), '');
 
 function escapeHtml(value: unknown): string {
   return String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' })[character] ?? character);
@@ -271,10 +324,9 @@ function notFoundPage(): string {
   return shell(`<main id="main" class="not-found"><p class="error-code">404</p><h1 tabindex="-1">Page not found</h1><p>Check the address or return to your meal templates.</p>${link('/', 'Return home', 'button primary')}</main>`);
 }
 
-async function render(push = false): Promise<void> {
+async function render(mode: NavigationMode = 'initial', savedPosition?: ScrollPosition): Promise<void> {
   const path = location.pathname.replace(/\/$/, '') || '/';
   const demoEntry = path === '/' && new URLSearchParams(location.search).get('demo') === '1';
-  if (push) scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   let renderedNotFound = false;
   if (demoEntry) app.innerHTML = await appPage();
   else if (path === '/') app.innerHTML = landingPage();
@@ -304,15 +356,26 @@ async function render(push = false): Promise<void> {
   updateOfflineNote();
   const heading = app.querySelector<HTMLElement>('h1');
   const announcer = app.querySelector<HTMLElement>('.route-announcer');
-  if (push && heading) {
-    heading.focus();
+  if (mode !== 'initial' && heading) {
+    heading.focus({ preventScroll: true });
     if (announcer) announcer.textContent = heading.textContent;
+  }
+  await afterLayout();
+  const position = mode === 'push' ? { x: 0, y: 0 } : savedPosition;
+  if (position) {
+    setScrollPosition(position);
+    const entryId = entryIdFrom(history.state);
+    if (entryId) scrollPositions.set(entryId, position);
   }
 }
 
 function navigate(url: string): void {
-  history.pushState({}, '', url);
-  void render(true);
+  saveCurrentScrollPosition();
+  const entryId = crypto.randomUUID();
+  const position = { x: 0, y: 0 };
+  scrollPositions.set(entryId, position);
+  history.pushState(stateWithScroll({}, entryId, position), '', url);
+  void render('push', position);
 }
 
 function showToast(message: string): void {
@@ -537,7 +600,15 @@ document.addEventListener('click', (event) => { void handleClick(event); });
 document.addEventListener('submit', (event) => { void handleSubmit(event); });
 document.addEventListener('input', (event) => { void handleChange(event); });
 document.addEventListener('change', (event) => { void handleChange(event); });
-window.addEventListener('popstate', () => { void render(true); });
+window.addEventListener('scroll', () => {
+  const entryId = entryIdFrom(history.state);
+  if (entryId) scrollPositions.set(entryId, currentScrollPosition());
+}, { passive: true });
+window.addEventListener('popstate', (event) => {
+  const entryId = entryIdFrom(event.state);
+  const position = (entryId ? scrollPositions.get(entryId) : undefined) ?? scrollPositionFrom(event.state) ?? { x: 0, y: 0 };
+  void render('history', position);
+});
 window.addEventListener('online', updateOfflineNote);
 window.addEventListener('offline', updateOfflineNote);
 
@@ -558,4 +629,4 @@ if (!isDemo() && location.pathname === '/app' && new URLSearchParams(location.se
   void deleteDemoDatabase();
 }
 
-void render();
+void render('initial', initialScrollPosition);

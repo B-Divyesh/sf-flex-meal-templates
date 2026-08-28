@@ -78,6 +78,42 @@ test('keyboard users can enter the demo and adjust a portion', async ({ page }) 
   await expect(page.locator('[data-nutrient="calories"] [data-total]')).toHaveText('386');
 });
 
+test('F-4-1 restores Back and Forward scroll positions while focusing each destination H1', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  const homeY = await page.evaluate(async () => {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });
+    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    return window.scrollY;
+  });
+  expect(homeY).toBeGreaterThan(100);
+
+  await page.getByRole('link', { name: 'Demo', exact: true }).evaluate((link) => (link as HTMLAnchorElement).click());
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.getByRole('heading', { name: 'Adjust a meal for today' })).toBeFocused();
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+  const demoY = await page.evaluate(async () => {
+    window.scrollTo({ top: 420, behavior: 'instant' });
+    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    return window.scrollY;
+  });
+  expect(demoY).toBeGreaterThan(200);
+
+  await page.goBack();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', { name: 'Adjust portions without changing meal templates' })).toBeFocused();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThanOrEqual(homeY - 2);
+  expect(Math.abs(await page.evaluate(() => window.scrollY) - homeY)).toBeLessThanOrEqual(2);
+
+  await page.goForward();
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.getByRole('heading', { name: 'Adjust a meal for today' })).toBeFocused();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThanOrEqual(demoY - 2);
+  expect(Math.abs(await page.evaluate(() => window.scrollY) - demoY)).toBeLessThanOrEqual(2);
+});
+
 test('static fallback pages use the complete site skeleton and route metadata', async ({ page }) => {
   const expected = [
     ['/404.html', 'Page not found — Flex Meal Templates', 'This Flex Meal Templates page could not be found.'],
