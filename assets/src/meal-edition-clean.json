@@ -1,0 +1,8 @@
+{
+  "asset": "meal-edition-clean.png",
+  "created": "2026-08-28",
+  "tool": "/opt/fleet/lib/gen-image.sh",
+  "deployment": "factory-image",
+  "prompt": "Straight-overhead monochrome editorial still life on completely blank warm newsprint: an old mechanical kitchen scale with a clean numberless dial, one measuring spoon, loose rolled oats, a small bowl of black beans, and three blank rectangular ingredient slips. Sparse graphite arcs and simple ruled lines only, with one tiny oxblood red pencil tick. Refined tactile linocut print texture, soft north-window light, charcoal black and bone paper, generous central negative space, balanced newspaper photo composition. Every sheet and surface must be entirely blank: absolutely no letters, words, numbers, symbols, logos, labels, handwriting, printed pages, watermarks, brands, people, or hands. No gradients, neon, 3D render, UI mockup, or distorted utensils.",
+  "review": "Accepted after visual inspection: blank slips, coherent utensils, no text, logos, people, or misleading UI."
+}
