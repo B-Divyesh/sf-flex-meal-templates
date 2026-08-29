@@ -108,7 +108,7 @@ function shell(content: string, options: { demo?: boolean; page?: string } = {})
     <footer class="site-footer">
       <p>Adjust portions without copying meal templates.</p>
       <nav aria-label="Footer navigation">${link('/privacy', 'Privacy')} ${link('/terms', 'Terms')} <a href="https://sociobot.in" rel="external">Built by Param Factory <span class="sr-only">(external site)</span></a></nav>
-      <p>Version 1.0.3</p>
+      <p>Version 1.0.4</p>
     </footer>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>`;
 }
@@ -122,7 +122,7 @@ function landingPage(): string {
           <p class="dek">For people who repeat meals and want each portion checked against their nutrition ranges.</p>
           <div class="hero-action">
             ${link('/?demo=1', 'Try it with sample data', 'button primary')}
-            <span>Open two sample meal templates. Nothing enters your records.</span>
+            <span>Open two sample meal templates. One is ready to adjust. Nothing enters your records.</span>
           </div>
           <div class="secondary-start">
             ${link('/app/new', 'Create your first meal template', 'button secondary')}
@@ -227,6 +227,7 @@ function logWorkspace(template: MealTemplate): string {
         <input id="multiplier" name="multiplier" type="range" min="0.25" max="3" step="0.05" value="1" />
         <input class="number-input" id="multiplier-number" aria-label="Portion multiplier as a number" type="number" min="0.25" max="3" step="0.05" value="1" />
       </div>
+      <section class="range-section" aria-labelledby="range-title"><h3 id="range-title">Today’s nutrition against this meal’s ranges</h3>${bandTable(template, totals)}</section>
       <fieldset class="log-ingredients"><legend>Today’s ingredients</legend>
         ${template.ingredients.map((ingredient) => `<div class="log-ingredient" data-ingredient-id="${escapeHtml(ingredient.id)}">
           <div><label for="choice-${ingredient.id}">${escapeHtml(ingredient.name)}</label>${ingredient.substitutions.length ? `<select id="choice-${ingredient.id}" data-role="choice"><option value="">Use base ingredient</option>${ingredient.substitutions.map((sub) => `<option value="${escapeHtml(sub.id)}">Use ${escapeHtml(sub.name)}</option>`).join('')}</select>` : '<small>No saved substitutes</small>'}</div>
@@ -234,9 +235,9 @@ function logWorkspace(template: MealTemplate): string {
           <p class="delta" data-role="delta">Base amount</p>
         </div>`).join('')}
       </fieldset>
-      <section class="range-section" aria-labelledby="range-title"><h3 id="range-title">Today’s nutrition against this meal’s ranges</h3>${bandTable(template, totals)}</section>
       <div class="form-actions"><button class="button primary" type="submit">Log adjusted meal</button><span>Saving creates a dated record. The meal template stays unchanged.</span></div>
     </form>
+    <div class="workspace-actions">${link(`${pathBase()}/edit?id=${encodeURIComponent(template.id)}`, 'Edit meal template', 'button secondary compact')}<button type="button" class="button danger compact" data-action="delete-template" data-id="${escapeHtml(template.id)}">Delete</button></div>
   </section>`;
 }
 
@@ -281,7 +282,7 @@ async function appPage(): Promise<string> {
   if (store.needsRecovery) return recoveryPage(demo);
   const params = new URLSearchParams(location.search);
   const active = store.data.templates.find((item) => item.id === params.get('meal')) ?? store.data.templates[0];
-  return shell(`<main id="main" class="app-page">
+  return shell(`<main id="main" class="app-page${demo ? ' demo-app' : ''}">
     <header class="app-intro"><p class="kicker">${demo ? 'Sample meal templates' : 'Your meal templates'}</p><h1 tabindex="-1">Adjust a meal for today</h1><p>Pick a meal template, change its portion, and compare it with the nutrition ranges.</p><p id="offline-note" class="offline-note" hidden>You are offline. Meal templates and logging still work.</p></header>
     <div class="app-grid">${libraryMarkup(active?.id)}${active ? logWorkspace(active) : ''}</div>
     ${recentLogsMarkup()}

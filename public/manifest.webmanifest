@@ -3,7 +3,7 @@
   "short_name": "Flex Meals",
   "description": "Adjust meal portions and compare them with meal-specific nutrition ranges.",
   "id": "/app",
-  "start_url": "/app?v=4",
+  "start_url": "/app?v=5",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f3efe5",

@@ -1,6 +1,6 @@
 # Landing copy audit
 
-Audited 2026-08-28 against the plain-words rules. Counts treat hyphenated
+Audited 2026-08-29 against the plain-words rules. Counts treat hyphenated
 terms and numbers as one word. No landing sentence exceeds 22 words or uses a
 banned marketing word.
 
@@ -12,6 +12,7 @@ banned marketing word.
 | For people who repeat meals and want each portion checked against their nutrition ranges. | 14 | Audience and `portion-adjust` |
 | Try it with sample data | 5 | `demo-sample` |
 | Open two sample meal templates. | 5 | `demo-sample` |
+| One is ready to adjust. | 5 | `demo-sample` |
 | Nothing enters your records. | 4 | `demo-isolation` |
 | Create your first meal template | 5 | `template-authoring` |
 | Works offline after the first visit. | 6 | `offline-reload` |
@@ -53,7 +54,7 @@ breath and state the first step.
 | Terms | 1 | Footer link |
 | Built by Param Factory | 4 | Attribution link |
 | external site | 2 | Screen-reader clarification |
-| Version 1.0.3 | 2 | Release version |
+| Version 1.0.4 | 2 | Release version |
 
 Navigation text is also plain: “Skip to main content” (4), “Flex Meal
 Templates” (3), “Flex Meals” (2), “My meals” (2), “Demo” (1), and “Privacy”
@@ -72,6 +73,6 @@ Templates” (3), “Flex Meals” (2), “My meals” (2), “Demo” (1), and 
 | Tabular log download | CSV export |
 | Separate sample mode | demo |
 
-Catalog description: “Adjust repeat meal portions and check each log against
-saved nutrition ranges.” It has 12 words, 78 characters, and starts with a
+Catalog description: “Adjust repeat-meal portions and compare each log with
+saved nutrition ranges.” It has 11 words, 77 characters, and starts with a
 verb.

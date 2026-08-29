@@ -36,10 +36,10 @@
   },
   {
     "id": "demo-sample",
-    "claim": "The one-click sample opens two editable meals and one earlier log without saving to personal records.",
+    "claim": "The one-click sample opens two meal templates, one earlier log, and a ready portion-and-range view without using personal records.",
     "where": "landing first-screen action, README, demo documentation",
     "test": "npm run test:e2e -- --grep @claim:demo-sample",
-    "sandbox": "fresh browser context at /?demo=1; assert the persistent demo banner, both named sample meals, one earlier log, and Reset demo restoring that log"
+    "sandbox": "fresh 390x844 browser context at /?demo=1; assert the banner, both named meals, portion control and calorie result in the initial viewport, one earlier log, and Reset demo restoring that log"
   },
   {
     "id": "free-product",

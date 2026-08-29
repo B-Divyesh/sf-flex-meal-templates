@@ -57,4 +57,4 @@ Provenance: generated for this product with the Factory Azure `factory-image` de
 
 ## Accessibility and responsive intent
 
-Ink and muted text meet WCAG AA on paper. Focus uses a 3px red outline plus offset. At phone width, decorative folio labels disappear, the ingredient table becomes labelled rows, and actions stack while keeping 44px targets. The live nutrition summary appears before secondary notes. The artwork moves below the first action so the job stays visible without scrolling.
+Ink and muted text meet WCAG AA on paper. Focus uses a 3px red outline plus offset. At phone width, the demo becomes a compact two-column meal index followed by the selected portion control and nutrition table. Ingredient details and template actions follow the comparison, while every control keeps a 44px target. The artwork moves below the first action so the landing job stays visible without scrolling.

@@ -1,1 +1,1 @@
-Adjust repeat meal portions and check each log against saved nutrition ranges.
+Adjust repeat-meal portions and compare each log with saved nutrition ranges.

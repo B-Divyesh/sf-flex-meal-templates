@@ -8,7 +8,7 @@ The app works offline after the first visit. Meal templates and logs stay in thi
 
 ## Try sample meals
 
-Open `/?demo=1` locally or visit <https://flex-meal-templates.sociobot.in/?demo=1>. The sample opens two meal templates and one earlier log. Demo records use a separate browser database and never enter real records. **Reset demo** restores the bundled sample.
+Open `/?demo=1` locally or visit <https://flex-meal-templates.sociobot.in/?demo=1>. The sample opens two meal templates, one earlier log, and a portion ready to adjust. Demo records use a separate browser database and never enter real records. **Reset demo** restores the bundled sample.
 
 ## Run locally
 

@@ -11,7 +11,7 @@ export type RouteMeta = {
 export const routeMeta: Record<string, RouteMeta> = {
   '/': { title: 'Flex Meal Templates — Adjust meal portions', description: 'Adjust meal portions, compare them with saved nutrition ranges, and log them without changing the meal template.' },
   '/app': { title: 'Your meals — Flex Meal Templates', description: 'Save meal templates, adjust today’s portions, and compare nutrition with each meal’s ranges.', robots: 'noindex' },
-  '/demo': { title: 'Demo — Flex Meal Templates', description: 'Try two sample meal templates and one earlier log without changing your records.', robots: 'noindex' },
+  '/demo': { title: 'Demo — Flex Meal Templates', description: 'Try two sample meal templates with one portion ready to adjust, without changing your records.', robots: 'noindex' },
   '/app/new': { title: 'New meal — Flex Meal Templates', description: 'Create a meal template with ingredients and custom nutrition ranges.', robots: 'noindex' },
   '/app/edit': { title: 'Edit meal — Flex Meal Templates', description: 'Edit a meal template, its ingredients, and its nutrition ranges.', robots: 'noindex' },
   '/demo/new': { title: 'New sample meal — Flex Meal Templates', description: 'Add a meal template to the separate sample workspace.', robots: 'noindex' },

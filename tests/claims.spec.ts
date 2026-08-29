@@ -88,6 +88,7 @@ test('@claim:demo-isolation keeps demo and real databases separate', async ({ pa
 });
 
 test('@claim:demo-sample opens the isolated sample from the one-click query path', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/?demo=1');
   await expect(page).toHaveURL(/\?demo=1$/);
   await expect(page.getByText('Demo — sample data, nothing is saved')).toBeVisible();
@@ -95,6 +96,8 @@ test('@claim:demo-sample opens the isolated sample from the one-click query path
   await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Lentil desk lunch', { exact: true }).first()).toBeVisible();
   await expect(page.getByRole('row')).toHaveCount(2);
+  await expect(page.getByLabel('Portion multiplier as a number')).toBeInViewport();
+  await expect(page.locator('[data-nutrient="calories"]')).toBeInViewport();
 
   await page.getByRole('button', { name: 'Log adjusted meal' }).click();
   await expect(page.getByRole('row')).toHaveCount(3);
@@ -256,7 +259,7 @@ test('routes update title, descriptions, and social descriptions', async ({ page
   const expected = [
     ['/app', 'Your meals — Flex Meal Templates', 'Save meal templates, adjust today’s portions, and compare nutrition with each meal’s ranges.'],
     ['/app/new', 'New meal — Flex Meal Templates', 'Create a meal template with ingredients and custom nutrition ranges.'],
-    ['/demo', 'Demo — Flex Meal Templates', 'Try two sample meal templates and one earlier log without changing your records.'],
+    ['/demo', 'Demo — Flex Meal Templates', 'Try two sample meal templates with one portion ready to adjust, without changing your records.'],
     ['/privacy', 'Privacy — Flex Meal Templates', 'Read how Flex Meal Templates stores meal records in your browser and keeps demo data separate.'],
     ['/terms', 'Terms — Flex Meal Templates', 'Read the terms for using Flex Meal Templates as a personal meal-recording utility.'],
     ['/missing-page', 'Page not found — Flex Meal Templates', 'This Flex Meal Templates page could not be found.']
