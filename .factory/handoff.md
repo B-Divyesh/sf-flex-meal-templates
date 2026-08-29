@@ -1,4 +1,47 @@
-# Flex Meal Templates — polish round 4 handoff
+# Flex Meal Templates — review 5 handoff
+
+## Current result
+
+**FAIL.** This review made no product-code changes. The complete record is in
+[review-5.md](review-5.md).
+
+## Review-5 verification
+
+- Fresh phone and desktop live visits: the landing's job, audience, and first
+  action are clear.
+- Fresh live demo log/reset/exit isolation, same-origin request log, and
+  service-worker-controlled offline reload.
+- Clean clone `/tmp/flex-review5-8lpjY3/repo`: all 11 declared claim commands
+  passed individually, as did `npm test` and `npm run build` with `dist/`.
+- Live routing/metadata, sitemap, fallback shell, history focus/scroll,
+  no-dead-link checks, and Axe checks were rerun. Earlier findings F-1-1
+  through F-4-1 remain fixed.
+
+## Remaining gap
+
+**F-5-1 (blocking):** At 390×844, the initial `/?demo=1` screen only shows
+the demo banner and meal list. The active adjustment form starts at y=1035,
+the portion control at y=1135, and nutrition totals at y=2062. The one-click
+demo therefore does not show the product being used immediately.
+
+Make the selected sample's portion control and a nutrition-range result visible
+in the initial phone viewport, add a viewport regression, and rerun the full
+review checklist.
+
+## Run locally
+
+```sh
+npm ci
+npm test
+npm run build
+npm run preview
+```
+
+Open `http://127.0.0.1:4173/?demo=1` at 390×844 to reproduce the issue.
+
+---
+
+# Previous polish round 4 handoff (historical)
 
 ## Result
 
