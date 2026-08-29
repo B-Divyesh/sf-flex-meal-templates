@@ -73,5 +73,5 @@ Templates” (3), “Flex Meals” (2), “My meals” (2), “Demo” (1), and 
 | Separate sample mode | demo |
 
 Catalog description: “Adjust repeat meal portions and check each log against
-saved nutrition ranges.” It has 12 words, 74 characters, and starts with a
+saved nutrition ranges.” It has 12 words, 78 characters, and starts with a
 verb.
