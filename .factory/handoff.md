@@ -1,103 +1,38 @@
-# Flex Meal Templates — review 5 handoff
-
-## Current result
-
-**FAIL.** This review made no product-code changes. The complete record is in
-[review-5.md](review-5.md).
-
-## Review-5 verification
-
-- Fresh phone and desktop live visits: the landing's job, audience, and first
-  action are clear.
-- Fresh live demo log/reset/exit isolation, same-origin request log, and
-  service-worker-controlled offline reload.
-- Clean clone `/tmp/flex-review5-8lpjY3/repo`: all 11 declared claim commands
-  passed individually, as did `npm test` and `npm run build` with `dist/`.
-- Live routing/metadata, sitemap, fallback shell, history focus/scroll,
-  no-dead-link checks, and Axe checks were rerun. Earlier findings F-1-1
-  through F-4-1 remain fixed.
-
-## Remaining gap
-
-**F-5-1 (blocking):** At 390×844, the initial `/?demo=1` screen only shows
-the demo banner and meal list. The active adjustment form starts at y=1035,
-the portion control at y=1135, and nutrition totals at y=2062. The one-click
-demo therefore does not show the product being used immediately.
-
-Make the selected sample's portion control and a nutrition-range result visible
-in the initial phone viewport, add a viewport regression, and rerun the full
-review checklist.
-
-## Run locally
-
-```sh
-npm ci
-npm test
-npm run build
-npm run preview
-```
-
-Open `http://127.0.0.1:4173/?demo=1` at 390×844 to reproduce the issue.
-
----
-
-# Previous polish round 4 handoff (historical)
+# Flex Meal Templates — polish round 5 handoff
 
 ## Result
 
-**PASS.** Every finding in reviews 1–4 and every earlier polish acceptance
-item is resolved. Browser Back and Forward now restore each route's scroll
-position while keeping the destination H1 focused and announced.
+**PASS.** Every finding in reviews 1–5 is resolved. The final phone demo shows both sample meal templates, the selected portion control, and its calorie range result in the initial 390×844 viewport.
 
-The final product code is `a82023d0abec33b5d7f661f5466ef529ff8c71e5` on
-`origin/main`. Deployment `a3fd57c8-1e14-47b2-b7dd-164e29322759` is live at
-<https://flex-meal-templates.sociobot.in>.
+The product repair is commit `9ba72e12234abad56a2441aacae187be1241558a` on `origin/main`. Azure Static Web Apps deployment `552b21e3-a152-46b2-8dc1-28525dccff87` is live at <https://flex-meal-templates.sociobot.in>.
 
 ## What changed
 
-- Replaced the shared route-change boolean with explicit initial, push, and
-  history navigation modes.
-- Assigned each history entry its own scroll state. Link navigation saves the
-  departing position and starts the new page at the top. Back/Forward restores
-  the saved destination position after the DOM is ready.
-- Focuses and announces the destination H1 with `preventScroll`, so focus does
-  not overwrite the restored viewport.
-- Added the F-4-1 Back/Forward regression, including separate home and demo
-  positions and H1 focus assertions.
-- Updated the verb-first catalog description to 78 characters.
-- Preserved the existing broadsheet visual identity, isolated demo databases,
-  route metadata, legal/static pages, offline shell, and complete claim suite.
+- Reordered the adjustment workspace so nutrition totals and range states follow the portion control, before ingredient details.
+- Added a compact phone-demo layout: the two sample meal templates form a two-column index, while the selected adjustment remains immediately below.
+- Moved secondary edit/delete controls below the demo form on phones without removing them; desktop and personal-workspace placement remains unchanged.
+- Reworded the first-screen action result to say one sample is ready to adjust.
+- Strengthened the `demo-sample` claim and added a dedicated F-5-1 viewport regression with complete bounding-box checks.
+- Updated Demo metadata, copy audit, demo contract, visual thesis, PWA cache/version markers, and the verb-first 77-character catalog description.
+- Preserved the monochrome newsprint palette, square rules, serif/sans pairing, original still life, and edition-change motion policy.
 
-The finding-by-finding record is in [polish-4.md](polish-4.md).
+The finding-by-finding record is in [polish-5.md](polish-5.md).
 
 ## Exact verification
 
-Final clean clone: `/tmp/flex-polish4-final-lyBYHx/repo` at `a82023d`.
+Fresh clone: `/tmp/flex-polish5-clean-bS9uHm/repo` at `9ba72e12234abad56a2441aacae187be1241558a`.
 
 - `npm ci`: passed; zero audit vulnerabilities.
 - Every command in `.factory/claims.json`: 11/11 passed independently.
-- `npm test`: 12 unit and 22 Playwright browser tests passed.
-- `npm run build`: passed; `dist/index.html` exists.
-- Build size: 36.88 kB JavaScript (11.93 kB gzip), 14.67 kB CSS
-  (4.02 kB gzip), no external font or script.
-- F-4-1 regression: five repeated local runs passed, then the clean-clone run
-  passed. The cold live run restored home `2186 → 2186` and demo `420 → 420`
-  while the correct H1 remained focused.
-- Local Lighthouse: 100 performance, 100 accessibility, 100 best practices,
-  100 SEO; 1.51 s LCP, 0 CLS, 4 ms total blocking time.
-- Live Lighthouse: 100 performance, 100 accessibility, 100 best practices,
-  100 SEO; 1.05 s LCP, 0 CLS, 6.5 ms total blocking time.
-- `/opt/fleet/lib/verify-url.sh` passed on live home, `?demo=1`, Privacy,
-  Terms, `/app/new`, `/demo/new`, invalid edit, 404, and offline pages.
-- The final cold live script passed 80 checks: route titles/descriptions,
-  one H1/main, 390 px fit, axe, demo log/reset/exit isolation, same-origin
-  requests, service-worker offline reload, Back/Forward position and focus,
-  CSP/nosniff headers, real asset 404, sitemap inventory, and byte-for-byte
-  deployed JavaScript equality.
-
-Evidence is under [evidence/polish-4](evidence/polish-4), including
-`live-check.json`, local/live Lighthouse reports, route screenshots, and the
-dedicated Back/Forward viewports.
+- `npm test`: 12 unit tests and 25 Playwright browser tests passed.
+- `npm run build`: passed and produced `dist/index.html`.
+- Bundle: 37.19 kB JavaScript (11.98 kB gzip); 16.36 kB CSS (4.31 kB gzip).
+- Local Lighthouse: 100 performance, 100 accessibility, 100 best practices, 100 SEO; 1.5 s LCP, 0 CLS, 0 ms TBT.
+- Live Lighthouse: 100 performance, 100 accessibility, 100 best practices, 100 SEO; 1.1 s LCP, 0 CLS, 0 ms TBT.
+- Factory URL verifier: passed on live home, `?demo=1`, app, both creation routes, Privacy, Terms, SPA missing, static 404, and offline pages.
+- Cold live audit: 105 checks passed across first-screen copy, F-5-1 geometry, route titles/descriptions/canonicals, one H1/main, 390 px fit, legal links, Axe, demo log/reset/exit isolation, same-origin requests, service-worker offline reload, Back/Forward scroll and focus, CSP/nosniff, real asset 404, sitemap, attribution, and deployed-byte equality.
+- Live F-5-1 geometry: the complete portion control spans y=509–612 and the calories row spans y=654–733. See [live-check.json](evidence/polish-5/live-check.json) and [live-f5-demo-390.png](evidence/polish-5/live-f5-demo-390.png).
+- Live deployed JavaScript SHA-256: `adf52279a37d722c2ec44e6c3cbda9b97cc596292ba61998ca22395ca9f529b5`, identical to `dist/assets/index-DCLcbBRo.js`.
 
 ## Run locally
 

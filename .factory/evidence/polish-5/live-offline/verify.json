@@ -1,0 +1,14 @@
+{
+  "url": "https://flex-meal-templates.sociobot.in/offline.html",
+  "loadMs": 613,
+  "errors": [],
+  "a11y": {
+    "title": "Offline — Flex Meal Templates",
+    "lang": "en",
+    "h1": 1,
+    "main": true,
+    "imgsMissingAlt": 0,
+    "buttonsUnlabeled": 0,
+    "textLength": 273
+  }
+}

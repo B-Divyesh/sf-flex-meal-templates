@@ -96,7 +96,7 @@ test('@claim:demo-sample opens the isolated sample from the one-click query path
   await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Lentil desk lunch', { exact: true }).first()).toBeVisible();
   await expect(page.getByRole('row')).toHaveCount(2);
-  await expect(page.getByLabel('Portion multiplier as a number')).toBeInViewport();
+  await expect(page.locator('.portion-control')).toBeInViewport();
   await expect(page.locator('[data-nutrient="calories"]')).toBeInViewport();
 
   await page.getByRole('button', { name: 'Log adjusted meal' }).click();

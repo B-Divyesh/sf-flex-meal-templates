@@ -116,8 +116,9 @@ test('F-5-1 shows a portion control and nutrition result in the initial phone de
   await expect(page.getByText('Weekday overnight oats', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Lentil desk lunch', { exact: true }).first()).toBeVisible();
 
-  const portion = page.getByLabel('Portion multiplier as a number');
+  const portion = page.locator('.portion-control');
   const calories = page.locator('[data-nutrient="calories"]');
+  await expect(page.getByText('Portion multiplier', { exact: true })).toBeVisible();
   await expect(portion).toBeInViewport();
   await expect(calories).toBeInViewport();
   await expect(calories).toContainText('514 kcal');
