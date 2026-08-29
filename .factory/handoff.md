@@ -1,12 +1,31 @@
-# Flex Meal Templates — polish round 5 handoff
+# Flex Meal Templates — review 6 handoff
 
 ## Result
 
-**PASS.** Every finding in reviews 1–5 is resolved. The final phone demo shows both sample meal templates, the selected portion control, and its calorie range result in the initial 390×844 viewport.
+**PASS.** Review 6 found no blocking or minor product issue. This commit
+changes documentation only: [review-6.md](review-6.md) records the complete
+adversarial review and copy audit.
 
-The product repair is commit `9ba72e12234abad56a2441aacae187be1241558a` on `origin/main`. Azure Static Web Apps deployment `552b21e3-a152-46b2-8dc1-28525dccff87` is live at <https://flex-meal-templates.sociobot.in>.
+The product repair remains commit `9ba72e12234abad56a2441aacae187be1241558a`.
+The live site is <https://flex-meal-templates.sociobot.in>.
 
-## What changed
+## Review 6 verification
+
+Fresh clone: `/tmp/flex-review6-eyqyVs/repo` at
+`37eeb2b35e19d9960e84730dbdeab2553bda4106`.
+
+- `npm ci` passed with zero vulnerabilities.
+- All 11 claim commands from `.factory/claims.json` passed independently.
+- `npm test` passed: 12 unit tests and 25 Playwright browser tests.
+- `npm run build` passed and produced `dist/index.html`.
+- Fresh live mobile/desktop checks passed: cold first read, phone demo
+  geometry, demo/reset/real-data isolation, same-origin requests, offline
+  reload, route metadata, link crawl, Back/Forward scroll and focus, static
+  404, and CSP/security headers.
+- The live JavaScript equals the fresh build by SHA-256:
+  `adf52279a37d722c2ec44e6c3cbda9b97cc596292ba61998ca22395ca9f529b5`.
+
+## Prior product changes
 
 - Reordered the adjustment workspace so nutrition totals and range states follow the portion control, before ingredient details.
 - Added a compact phone-demo layout: the two sample meal templates form a two-column index, while the selected adjustment remains immediately below.
