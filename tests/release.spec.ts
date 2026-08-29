@@ -96,7 +96,7 @@ test('F-4-1 restores Back and Forward scroll positions while focusing each desti
 
   const demoY = await page.evaluate(async () => {
     window.scrollTo({ top: 420, behavior: 'instant' });
-    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
     return window.scrollY;
   });
   expect(demoY).toBeGreaterThan(200);

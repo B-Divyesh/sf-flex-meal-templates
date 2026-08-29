@@ -18,6 +18,8 @@ type NavigationMode = 'initial' | 'push' | 'history';
 type ScrollPosition = { x: number; y: number };
 
 const scrollPositions = new Map<string, ScrollPosition>();
+let activeScrollEntryId = '';
+let restoringScroll = false;
 
 function historyRecord(value: unknown): Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : {};
@@ -45,7 +47,7 @@ function stateWithScroll(value: unknown, entryId: string, position: ScrollPositi
 }
 
 function saveCurrentScrollPosition(): void {
-  const entryId = entryIdFrom(history.state) ?? crypto.randomUUID();
+  const entryId = activeScrollEntryId || entryIdFrom(history.state) || crypto.randomUUID();
   const position = currentScrollPosition();
   scrollPositions.set(entryId, position);
   history.replaceState(stateWithScroll(history.state, entryId, position), '');
@@ -62,6 +64,7 @@ function afterLayout(): Promise<void> {
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const initialEntryId = entryIdFrom(history.state) ?? crypto.randomUUID();
 const initialScrollPosition = scrollPositionFrom(history.state) ?? currentScrollPosition();
+activeScrollEntryId = initialEntryId;
 scrollPositions.set(initialEntryId, initialScrollPosition);
 history.replaceState(stateWithScroll(history.state, initialEntryId, initialScrollPosition), '');
 
@@ -325,6 +328,7 @@ function notFoundPage(): string {
 }
 
 async function render(mode: NavigationMode = 'initial', savedPosition?: ScrollPosition): Promise<void> {
+  if (mode !== 'initial') restoringScroll = true;
   const path = location.pathname.replace(/\/$/, '') || '/';
   const demoEntry = path === '/' && new URLSearchParams(location.search).get('demo') === '1';
   let renderedNotFound = false;
@@ -364,9 +368,10 @@ async function render(mode: NavigationMode = 'initial', savedPosition?: ScrollPo
   const position = mode === 'push' ? { x: 0, y: 0 } : savedPosition;
   if (position) {
     setScrollPosition(position);
-    const entryId = entryIdFrom(history.state);
-    if (entryId) scrollPositions.set(entryId, position);
+    scrollPositions.set(activeScrollEntryId, position);
   }
+  await afterLayout();
+  restoringScroll = false;
 }
 
 function navigate(url: string): void {
@@ -375,6 +380,7 @@ function navigate(url: string): void {
   const position = { x: 0, y: 0 };
   scrollPositions.set(entryId, position);
   history.pushState(stateWithScroll({}, entryId, position), '', url);
+  activeScrollEntryId = entryId;
   void render('push', position);
 }
 
@@ -601,12 +607,16 @@ document.addEventListener('submit', (event) => { void handleSubmit(event); });
 document.addEventListener('input', (event) => { void handleChange(event); });
 document.addEventListener('change', (event) => { void handleChange(event); });
 window.addEventListener('scroll', () => {
-  const entryId = entryIdFrom(history.state);
-  if (entryId) scrollPositions.set(entryId, currentScrollPosition());
+  if (!restoringScroll) scrollPositions.set(activeScrollEntryId, currentScrollPosition());
 }, { passive: true });
+window.addEventListener('scrollend', () => {
+  if (!restoringScroll) saveCurrentScrollPosition();
+});
 window.addEventListener('popstate', (event) => {
   const entryId = entryIdFrom(event.state);
   const position = (entryId ? scrollPositions.get(entryId) : undefined) ?? scrollPositionFrom(event.state) ?? { x: 0, y: 0 };
+  if (entryId) activeScrollEntryId = entryId;
+  restoringScroll = true;
   void render('history', position);
 });
 window.addEventListener('online', updateOfflineNote);
